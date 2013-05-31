@@ -23,3 +23,6 @@ build/
 *.iws
 *.idea
 
+# Spring Bootstrap artifacts
+
+dependency-reduced-pom.xml
