@@ -5,6 +5,7 @@ What you'll build
 -----------------
 This guide walks you through the process of setting up a RabbitMQ AMQP server and then using it to publish and subscribe for messages with Spring.
 
+
 What you'll need
 ----------------
 - About 15 minutes
@@ -12,6 +13,7 @@ What you'll need
 - RabbitMQ server (installation instructions below)
 
 ## {!include#how-to-complete-this-guide}
+
 
 <a name="scratch"></a>
 Set up the project
@@ -25,58 +27,7 @@ Set up the project
 
 {!include#maven-project-setup-options}
 
-`pom.xml`
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.springframework</groupId>
-    <artifactId>gs-messaging-rabbitmq-complete</artifactId>
-    <version>0.1.0</version>
-
-    <parent>
-        <groupId>org.springframework.bootstrap</groupId>
-        <artifactId>spring-bootstrap-starters</artifactId>
-        <version>0.5.0.BUILD-SNAPSHOT</version>
-    </parent>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>1.1.4.RELEASE</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-context</artifactId>
-        </dependency>
-    </dependencies>
-
-    <!-- TODO: remove once bootstrap goes GA -->
-    <repositories>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>http://repo.springsource.org/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>http://repo.springsource.org/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-</project>
-```
+    {!include:complete/pom.xml}
 
 {!include#bootstrap-starter-pom-disclaimer}
 
@@ -86,28 +37,22 @@ Before we can build our messaging application, we need to set up the server that
 
 RabbitMQ is an AMQP server. The server is freely available at <http://www.rabbitmq.com/download.html>. You can manually download it, or if happen to be using a Mac with homebrew:
 
-```sh
-$ brew install rabbitmq
-```
+    $ brew install rabbitmq
 
 Once you have unpacked it, launch it with default settings.
 
-```sh
-$ rabbitmq-server
-```
+    $ rabbitmq-server
 
 You should expect something like this:
 
-```sh
+                  RabbitMQ 3.1.0. Copyright (C) 2007-2013 VMware, Inc.
+      ##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
+      ##  ##
+      ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
+      ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
+      ##########
+                  Starting broker... completed with 6 plugins.
 
-              RabbitMQ 3.1.0. Copyright (C) 2007-2013 VMware, Inc.
-  ##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
-  ##  ##
-  ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
-  ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
-  ##########
-              Starting broker... completed with 6 plugins.
-```
 
 <a name="initial"></a>
 Creating a RabbitMQ message receiver
@@ -115,16 +60,7 @@ Creating a RabbitMQ message receiver
 
 With any messaging-based application, we need to create a receiver that will respond to published messages.
 
-`src/main/java/hello/Receiver.java`
-```java
-package hello;
-
-public class Receiver {
-	public void receiveMessage(String message) {
-		System.out.println("Received <" + message + ">");
-	}
-}
-```
+    {!include:complete/src/main/java/hello/Receiver.java}
 
 The `Receiver` is a simple POJO that defines a method for receiving messages. When we register it to receive messages, you can name it anything you want.
 
@@ -141,66 +77,7 @@ You'll use `RabbitTemplate` to send messages, and you will register a `Receiver`
 
 > **Note:** Because we didn't set up queues from the command-line, we also need `AmqpAdmin` to allow creation of dynamic queues.
 
-`src/main/java/hello/Application.java`
-```java
-package hello;
-
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-public class Application {
-
-	@Bean
-	CachingConnectionFactory connectionFactory() {
-		return new CachingConnectionFactory("localhost");
-	}
-
-	@Bean
-	SimpleMessageListenerContainer container(final CachingConnectionFactory connectionFactory) {
-		return new SimpleMessageListenerContainer() {{
-			setConnectionFactory(connectionFactory);
-			setQueueNames("chat");
-			setMessageListener(listenerAdapter());
-		}};
-	}
-	
-	@Bean
-	MessageListenerAdapter listenerAdapter() {
-		return new MessageListenerAdapter(new Receiver()) {{
-			setDefaultListenerMethod("receiveMessage");
-		}};
-	}
-	
-	@Bean
-	RabbitTemplate template(CachingConnectionFactory connectionFactory) {
-		return new RabbitTemplate(connectionFactory);
-	}
-
-	// Needed to dynamically create queues on demand
-	@Bean
-	AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
-		return new RabbitAdmin(connectionFactory);
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
-		System.out.println("Waiting five seconds...");
-		Thread.sleep(5000);
-		RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
-		System.out.println("Sending message...");
-		template.convertAndSend("chat", "Hello from RabbitMQ!");
-		ctx.close();
-	}
-}
-```
+    {!include:complete/src/main/java/hello/Application.java}
 
 This example sets up a `CachingConnectionFactory` to our locally run RabbitMQ broker. That connection factory is injected into both the message listener container and the Rabbit template.
 
@@ -220,11 +97,10 @@ Run your application with `java -jar` at the command line:
 
     java -jar target/gs-messaging-rabbitmq-complete-0.1.0.jar
 
-
 You should see the following output:
 
-	Sending message...
-	Received <Hello from RabbitMQ!>
+    Sending message...
+    Received <Hello from RabbitMQ!>
 
 Summary
 -------
