@@ -8,22 +8,22 @@ This guide walks you through the process of setting up a RabbitMQ AMQP server an
 What you'll need
 ----------------
 - About 15 minutes
-- {!snippet:prereq-editor-jdk-buildtools}
+- {!include#prereq-editor-jdk-buildtools}
 - RabbitMQ server (installation instructions below)
 
-## {!snippet:how-to-complete-this-guide}
+## {!include#how-to-complete-this-guide}
 
 <a name="scratch"></a>
 Set up the project
 ------------------
 
-{!snippet:build-system-intro}
+{!include#build-system-intro}
 
-{!snippet:create-directory-structure-hello}
+{!include#create-directory-structure-hello}
 
 ### Create a Maven POM
 
-{!snippet:maven-project-setup-options}
+{!include#maven-project-setup-options}
 
 `pom.xml`
 ```xml
@@ -78,7 +78,7 @@ Set up the project
 </project>
 ```
 
-{!snippet:bootstrap-starter-pom-disclaimer}
+{!include#bootstrap-starter-pom-disclaimer}
 
 ### Installing and running RabbitMQ
 
@@ -212,7 +212,7 @@ The connection factory and message listener container beans are all you need to 
 
 The `main()` method kicks off everything by creating a Spring application context. This will start the message listener container and start listening for messages. It then retrieves the `RabbitTemplate` from the application context, waits five seconds, and send a "Hello from RabbitMQ!" message on the "chat" queue. Finally, it closes the Spring application context and the application ends.
 
-## {!snippet:build-an-executable-jar}
+## {!include#build-an-executable-jar}
 
 Run the application
 -------------------
