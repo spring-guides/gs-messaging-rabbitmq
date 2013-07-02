@@ -8,9 +8,9 @@ This guide walks you through the process of setting up a RabbitMQ AMQP server an
 
 What you'll need
 ----------------
-- About 15 minutes
-- {!include#prereq-editor-jdk-buildtools}
-- RabbitMQ server (installation instructions below)
+ - About 15 minutes
+ - {!include#prereq-editor-jdk-buildtools}
+ - RabbitMQ server (installation instructions below)
 
 ## {!include#how-to-complete-this-guide}
 
@@ -24,8 +24,6 @@ Set up the project
 {!include#create-directory-structure-hello}
 
 ### Create a Maven POM
-
-{!include#maven-project-setup-options}
 
     {!include:complete/pom.xml}
 
@@ -105,3 +103,6 @@ You should see the following output:
 Summary
 -------
 Congratulations! You've just developed a simple publisher and subscriber application using Spring and RabbitMQ. There's [more you can do with Spring and RabbitMQ](http://static.springsource.org/spring-amqp/reference/html/quick-tour.html) than what is covered here, but this should provide a good start.
+
+[zip]: https://github.com/springframework-meta/gs-messaging-rabbitmq/archive/master.zip
+
