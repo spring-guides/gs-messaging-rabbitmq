@@ -284,7 +284,9 @@ Run the application
 -------------------
 Run your application with `java -jar` at the command line:
 
-    java -jar target/gs-messaging-rabbitmq-complete-0.1.0.jar
+    java -jar target/gs-messaging-rabbitmq-0.1.0.jar
+
+
 
 You should see the following output:
 
