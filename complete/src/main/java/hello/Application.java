@@ -29,9 +29,7 @@ public class Application {
 	
 	@Bean
 	MessageListenerAdapter listenerAdapter() {
-		return new MessageListenerAdapter(new Receiver()) {{
-			setDefaultListenerMethod("receiveMessage");
-		}};
+		return new MessageListenerAdapter(new Receiver(), "receiveMessage");
 	}
 	
 	@Bean

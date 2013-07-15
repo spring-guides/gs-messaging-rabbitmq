@@ -73,7 +73,7 @@ In a project directory of your choosing, create the following subdirectory struc
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit</artifactId>
-            <version>1.1.4.RELEASE</version>
+            <version>1.2.0.RELEASE</version>
         </dependency>
         <dependency>
         	<groupId>org.springframework</groupId>
@@ -210,9 +210,7 @@ public class Application {
 	
 	@Bean
 	MessageListenerAdapter listenerAdapter() {
-		return new MessageListenerAdapter(new Receiver()) {{
-			setDefaultListenerMethod("receiveMessage");
-		}};
+		return new MessageListenerAdapter(new Receiver(), "receiveMessage");
 	}
 	
 	@Bean
