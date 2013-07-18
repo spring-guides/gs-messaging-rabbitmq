@@ -60,7 +60,7 @@ In a project directory of your choosing, create the following subdirectory struc
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>gs-messaging-rabbitmq-complete</artifactId>
+    <artifactId>gs-messaging-rabbitmq</artifactId>
     <version>0.1.0</version>
 
     <parent>
