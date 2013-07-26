@@ -1,8 +1,5 @@
 <#assign project_id="gs-messaging-rabbitmq">
 
-Getting Started: Messaging with RabbitMQ
-========================================
-
 What you'll build
 -----------------
 This guide walks you through the process of setting up a RabbitMQ AMQP server and then using it to publish and subscribe for messages with Spring.
