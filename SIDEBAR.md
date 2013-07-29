@@ -6,12 +6,14 @@ There's more to messaging and data integration than is covered here. You may wan
 
 * [Messaging with JMS][gs-messaging-jms]
 * [Messaging with Redis][gs-messaging-redis]
+* [Messaging with Reactor][gs-messaging-reactor]
 * [Integrating Data][gs-integration]
 * [Capturing Stream Data][gs-capturing-stream-data]
 * [Creating a Batch Service][gs-batch-processing]
 
 [gs-messaging-jms]: /guides/gs/messaging-jms/content
 [gs-messaging-redis]: /guides/gs/messaging-redis/content
+[gs-messaging-reactor]: /guides/gs/messaging-reactor/content
 [gs-integration]: /guides/gs/integration/content
 [gs-capturing-stream-data]: /guides/gs/capturing-stream-data/content
 [gs-batch-processing]: /guides/gs/batch-processing/content
