@@ -1,8 +1,10 @@
 <#assign project_id="gs-messaging-rabbitmq">
+This guide walks you through the process of setting up a RabbitMQ AMQP server and then using it to publish and subscribe for messages with Spring.
 
 What you'll build
 -----------------
-This guide walks you through the process of setting up a RabbitMQ AMQP server and then using it to publish and subscribe for messages with Spring.
+
+You'll build an application that publishes a message using Spring AMQP's `RabbitTemplate` and subscribing for it on a POJO using `MessageListenerAdapter`.
 
 What you'll need
 ----------------
