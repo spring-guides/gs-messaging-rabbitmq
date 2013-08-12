@@ -75,8 +75,8 @@ In a project directory of your choosing, create the following subdirectory struc
             <version>1.2.0.RELEASE</version>
         </dependency>
         <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 
@@ -150,9 +150,9 @@ With any messaging-based application, we need to create a receiver that will res
 package hello;
 
 public class Receiver {
-	public void receiveMessage(String message) {
-		System.out.println("Received <" + message + ">");
-	}
+    public void receiveMessage(String message) {
+        System.out.println("Received <" + message + ">");
+    }
 }
 ```
 
@@ -188,45 +188,45 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Application {
 
-	@Bean
-	CachingConnectionFactory connectionFactory() {
-		return new CachingConnectionFactory("localhost");
-	}
+    @Bean
+    CachingConnectionFactory connectionFactory() {
+        return new CachingConnectionFactory("localhost");
+    }
 
-	@Bean
-	SimpleMessageListenerContainer container(final CachingConnectionFactory connectionFactory) {
-		return new SimpleMessageListenerContainer() {{
-			setConnectionFactory(connectionFactory);
-			setQueueNames("chat");
-			setMessageListener(listenerAdapter());
-		}};
-	}
-	
-	@Bean
-	MessageListenerAdapter listenerAdapter() {
-		return new MessageListenerAdapter(new Receiver(), "receiveMessage");
-	}
-	
-	@Bean
-	RabbitTemplate template(CachingConnectionFactory connectionFactory) {
-		return new RabbitTemplate(connectionFactory);
-	}
+    @Bean
+    SimpleMessageListenerContainer container(final CachingConnectionFactory connectionFactory) {
+        return new SimpleMessageListenerContainer() {{
+            setConnectionFactory(connectionFactory);
+            setQueueNames("chat");
+            setMessageListener(listenerAdapter());
+        }};
+    }
+    
+    @Bean
+    MessageListenerAdapter listenerAdapter() {
+        return new MessageListenerAdapter(new Receiver(), "receiveMessage");
+    }
+    
+    @Bean
+    RabbitTemplate template(CachingConnectionFactory connectionFactory) {
+        return new RabbitTemplate(connectionFactory);
+    }
 
-	// Needed to dynamically create queues on demand
-	@Bean
-	AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
-		return new RabbitAdmin(connectionFactory);
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
-		System.out.println("Waiting five seconds...");
-		Thread.sleep(5000);
-		RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
-		System.out.println("Sending message...");
-		template.convertAndSend("chat", "Hello from RabbitMQ!");
-		ctx.close();
-	}
+    // Needed to dynamically create queues on demand
+    @Bean
+    AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+    
+    public static void main(String[] args) throws InterruptedException {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
+        System.out.println("Waiting five seconds...");
+        Thread.sleep(5000);
+        RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
+        System.out.println("Sending message...");
+        template.convertAndSend("chat", "Hello from RabbitMQ!");
+        ctx.close();
+    }
 }
 ```
 
@@ -270,7 +270,7 @@ Now run the following command to produce a single executable JAR file containing
 $ mvn package
 ```
 
-[spring-boot-maven-plugin]: https://github.com/SpringSource/spring-boot/tree/master/spring-boot-maven-plugin
+[spring-boot-maven-plugin]: https://github.com/SpringSource/spring-boot/tree/master/spring-boot-tools/spring-boot-maven-plugin
 
 > **Note:** The procedure above will create a runnable JAR. You can also opt to [build a classic WAR file](/guides/gs/convert-jar-to-war/) instead.
 

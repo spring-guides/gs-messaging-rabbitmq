@@ -13,43 +13,43 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Application {
 
-	@Bean
-	CachingConnectionFactory connectionFactory() {
-		return new CachingConnectionFactory("localhost");
-	}
+    @Bean
+    CachingConnectionFactory connectionFactory() {
+        return new CachingConnectionFactory("localhost");
+    }
 
-	@Bean
-	SimpleMessageListenerContainer container(final CachingConnectionFactory connectionFactory) {
-		return new SimpleMessageListenerContainer() {{
-			setConnectionFactory(connectionFactory);
-			setQueueNames("chat");
-			setMessageListener(listenerAdapter());
-		}};
-	}
-	
-	@Bean
-	MessageListenerAdapter listenerAdapter() {
-		return new MessageListenerAdapter(new Receiver(), "receiveMessage");
-	}
-	
-	@Bean
-	RabbitTemplate template(CachingConnectionFactory connectionFactory) {
-		return new RabbitTemplate(connectionFactory);
-	}
+    @Bean
+    SimpleMessageListenerContainer container(final CachingConnectionFactory connectionFactory) {
+        return new SimpleMessageListenerContainer() {{
+            setConnectionFactory(connectionFactory);
+            setQueueNames("chat");
+            setMessageListener(listenerAdapter());
+        }};
+    }
+    
+    @Bean
+    MessageListenerAdapter listenerAdapter() {
+        return new MessageListenerAdapter(new Receiver(), "receiveMessage");
+    }
+    
+    @Bean
+    RabbitTemplate template(CachingConnectionFactory connectionFactory) {
+        return new RabbitTemplate(connectionFactory);
+    }
 
-	// Needed to dynamically create queues on demand
-	@Bean
-	AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
-		return new RabbitAdmin(connectionFactory);
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
-		System.out.println("Waiting five seconds...");
-		Thread.sleep(5000);
-		RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
-		System.out.println("Sending message...");
-		template.convertAndSend("chat", "Hello from RabbitMQ!");
-		ctx.close();
-	}
+    // Needed to dynamically create queues on demand
+    @Bean
+    AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+    
+    public static void main(String[] args) throws InterruptedException {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
+        System.out.println("Waiting five seconds...");
+        Thread.sleep(5000);
+        RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
+        System.out.println("Sending message...");
+        template.convertAndSend("chat", "Hello from RabbitMQ!");
+        ctx.close();
+    }
 }
