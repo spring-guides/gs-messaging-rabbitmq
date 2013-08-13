@@ -30,6 +30,6 @@ There's more to messaging and data integration than is covered here. You may wan
 * [REST][u-rest]
 * [JSON][u-json]
 
-<@u_amqp/>
-<@u_rest/>
-<@u_json/>
+[u-amqp]: /understanding/AMQP
+[u-rest]: /understanding/REST
+[u-json]: /understanding/JSON
