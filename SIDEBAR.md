@@ -2,7 +2,7 @@
 
 There's more to messaging and data integration than is covered here. You may want to continue your exploration of Spring messaging and integration with the following
 
-### Getting Started Guides
+### Getting Started guides
 
 * [Messaging with JMS][gs-messaging-jms]
 * [Messaging with Redis][gs-messaging-redis]
@@ -24,7 +24,7 @@ There's more to messaging and data integration than is covered here. You may wan
 
 [tut-rest]: /guides/tutorials/rest
 
-### Understanding
+### Concepts and technologies
 
 * [AMQP][u-amqp]
 * [REST][u-rest]
