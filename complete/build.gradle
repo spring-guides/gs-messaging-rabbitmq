@@ -26,6 +26,7 @@ repositories {
 dependencies {
     compile("org.springframework.amqp:spring-rabbit:1.2.0.RELEASE")
     compile("org.springframework:spring-context")
+    compile("cglib:cglib:2.2.2")
     testCompile("junit:junit:4.11")
 }
 

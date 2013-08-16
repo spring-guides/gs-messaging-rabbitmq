@@ -23,9 +23,9 @@ Set up the project
 
 <@create_directory_structure_hello/>
 
-### Create a Maven POM
+### Create a Gradle build file
 
-    <@snippet path="pom.xml" prefix="initial"/>
+    <@snippet path="build.gradle" prefix="initial"/>
 
 <@bootstrap_starter_pom_disclaimer/>
 
@@ -43,14 +43,15 @@ Once you have unpacked it, launch it with default settings.
 
 You should expect something like this:
 
-                  RabbitMQ 3.1.0. Copyright (C) 2007-2013 VMware, Inc.
-      ##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
-      ##  ##
-      ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
-      ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
-      ##########
-                  Starting broker... completed with 6 plugins.
-
+```sh
+              RabbitMQ 3.1.3. Copyright (C) 2007-2013 VMware, Inc.
+  ##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
+  ##  ##
+  ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
+  ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
+  ##########
+              Starting broker... completed with 6 plugins.
+```
 
 <a name="initial"></a>
 Creating a RabbitMQ message receiver
@@ -87,9 +88,9 @@ The connection factory and message listener container beans are all you need to 
 
 The `main()` method kicks off everything by creating a Spring application context. This will start the message listener container and start listening for messages. It then retrieves the `RabbitTemplate` from the application context, waits five seconds, and send a "Hello from RabbitMQ!" message on the "chat" queue. Finally, it closes the Spring application context and the application ends.
 
-## <@build_an_executable_jar/>
+## <@build_an_executable_jar_with_gradle/>
 
-<@run_the_application_with_maven/>
+<@run_the_application_with_gradle/>
 
 You should see the following output:
 
