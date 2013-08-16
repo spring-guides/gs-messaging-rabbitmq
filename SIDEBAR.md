@@ -1,12 +1,12 @@
-### Related Resources
+## Related Resources
 
-There's more to messaging and data integration than is covered here. You may want to continue your exploration of Spring messaging and integration with the following
+There's more to messaging and data integration than what is covered here. You can continue to explore Spring messaging and integration with the following
 
 ### Getting Started guides
 
 * [Messaging with JMS][gs-messaging-jms]
 * [Messaging with Redis][gs-messaging-redis]
-* [Messaging with Reactor][gs-messaging-reactor]
+* [Creating an Asynchronous, Event-Driven Application with Reactor][gs-messaging-reactor]
 * [Integrating Data][gs-integration]
 * [Capturing Stream Data][gs-capturing-stream-data]
 * [Creating a Batch Service][gs-batch-processing]
