@@ -84,7 +84,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter:0.5.0.M2")
     compile("org.springframework.amqp:spring-rabbit:1.2.0.RELEASE")
     compile("org.springframework:spring-context")
-    compile("cglib:cglib:2.2.2")
     testCompile("junit:junit:4.11")
 }
 
