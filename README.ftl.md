@@ -81,7 +81,7 @@ This example sets up a `CachingConnectionFactory` to your locally run RabbitMQ b
 
 The bean defined in the `listenerAdapter()` method is registered as a message listener in the container defined in `container()`. It will listen for messages on the "chat" queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the `MessageListenerAdapter`, where you specify it to invoke `receiveMessage`.
 
-> **Note:** JMS queues and AMQP queues have different semantics. For example, JMS queues route messages to only one consumer. AMQP queues can route messages to many consumers. For more, see [Understanding AMQP]().
+> **Note:** JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see [Understanding AMQP]().
 
 The connection factory and message listener container beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
 
