@@ -70,6 +70,7 @@ Spring AMQP's `RabbitTemplate` provides everything you need to send and receive 
 - A connection factory
 - A message listener container
 - A Rabbit template
+- Declare the queue, the exchange, and the binding between them
 
 You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
 
@@ -84,6 +85,10 @@ The bean defined in the `listenerAdapter()` method is registered as a message li
 > **Note:** JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see [Understanding AMQP]().
 
 The connection factory and message listener container beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
+
+The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic exchange. The `binding()` method binds these two together, defining the behavior that occurs when RabbitTemplate publishes to an exchange.
+
+> **Note:** Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
 
 The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. It then retrieves the `RabbitTemplate` from the application context, waits five seconds, and sends a "Hello from RabbitMQ!" message on the "chat" queue. Finally, the container closes the Spring application context and the application ends.
 
