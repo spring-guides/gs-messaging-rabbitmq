@@ -104,5 +104,5 @@ You should see the following output:
 
 Summary
 -------
-Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's [more you can do with Spring and RabbitMQ](http://static.springsource.org/spring-amqp/reference/html/quick-tour.html) than what is covered here, but this should provide a good start.
+Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's [more you can do with Spring and RabbitMQ](http://docs.spring.io/spring-amqp/reference/html/quick-tour.html) than what is covered here, but this should provide a good start.
 
