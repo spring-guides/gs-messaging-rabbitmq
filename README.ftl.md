@@ -62,15 +62,17 @@ With any messaging-based application, you need to create a receiver that will re
 
 The `Receiver` is a simple POJO that defines a method for receiving messages. When you register it to receive messages, you can name it anything you want.
 
+> **Note:** For convenience, this POJO also has an autowired `AnnotationConfigApplicationContext`. This empowers it to shutdown the app once the message is receive. This is something you are not likely to implement in a production application.
+
 Register the listener and send a message
 ----------------------------------------------
 
 Spring AMQP's `RabbitTemplate` provides everything you need to send and receive messages with RabbitMQ. Specifically, you need to configure:
 
-- A connection factory
 - A message listener container
-- A Rabbit template
 - Declare the queue, the exchange, and the binding between them
+
+> **Note:** Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
 
 You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
 
@@ -78,13 +80,11 @@ You'll use `RabbitTemplate` to send messages, and you will register a `Receiver`
 
     <@snippet path="src/main/java/hello/Application.java" prefix="complete"/>
 
-This example sets up a `CachingConnectionFactory` to your locally run RabbitMQ broker. That connection factory is injected into both the message listener container and the Rabbit template.
-
 The bean defined in the `listenerAdapter()` method is registered as a message listener in the container defined in `container()`. It will listen for messages on the "chat" queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the `MessageListenerAdapter`, where you specify it to invoke `receiveMessage`.
 
 > **Note:** JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see [Understanding AMQP]().
 
-The connection factory and message listener container beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
+The message listener container and receiver beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
 
 The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic exchange. The `binding()` method binds these two together, defining the behavior that occurs when RabbitTemplate publishes to an exchange.
 

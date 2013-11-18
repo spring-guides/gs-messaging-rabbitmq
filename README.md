@@ -81,9 +81,7 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter:0.5.0.M5")
-    compile("org.springframework.amqp:spring-rabbit:1.2.0.RELEASE")
-    compile("org.springframework:spring-context")
+    compile("org.springframework.boot:spring-boot-starter-amqp:0.5.0.M6")
     testCompile("junit:junit:4.11")
 }
 
@@ -128,29 +126,38 @@ With any messaging-based application, you need to create a receiver that will re
 
 `src/main/java/hello/Receiver.java`
 ```java
+
 package hello;
 
-import java.util.concurrent.CountDownLatch;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Receiver {
 
-    public void receiveMessage(String message) {
+	@Autowired
+	AnnotationConfigApplicationContext context;
+
+	public void receiveMessage(String message) {
         System.out.println("Received <" + message + ">");
+        this.context.close();
     }
 }
 ```
 
 The `Receiver` is a simple POJO that defines a method for receiving messages. When you register it to receive messages, you can name it anything you want.
 
+> **Note:** For convenience, this POJO also has an autowired `AnnotationConfigApplicationContext`. This empowers it to shutdown the app once the message is receive. This is something you are not likely to implement in a production application.
+
 Register the listener and send a message
 ----------------------------------------------
 
 Spring AMQP's `RabbitTemplate` provides everything you need to send and receive messages with RabbitMQ. Specifically, you need to configure:
 
-- A connection factory
 - A message listener container
-- A Rabbit template
 - Declare the queue, the exchange, and the binding between them
+
+> **Note:** Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
 
 You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
 
@@ -158,99 +165,89 @@ You'll use `RabbitTemplate` to send messages, and you will register a `Receiver`
 
 `src/main/java/hello/Application.java`
 ```java
+
 package hello;
 
-
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.CountDownLatch;
-
 @Configuration
-public class Application {
+@EnableAutoConfiguration
+public class Application implements CommandLineRunner {
 
-    final static String queueName = "spring-boot";
+	final static String queueName = "spring-boot";
+
+	@Autowired
+	RabbitTemplate rabbitTemplate;
+
+	@Bean
+	Queue queue() {
+		return new Queue(queueName, false);
+	}
+
+	@Bean
+	TopicExchange exchange() {
+		return new TopicExchange("spring-boot-exchange");
+	}
+
+	@Bean
+	Binding binding(Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with(queueName);
+	}
+
+	@Bean
+	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueueNames(queueName);
+		container.setMessageListener(listenerAdapter);
+		return container;
+	}
 
     @Bean
-    ConnectionFactory connectionFactory() {
-        return new CachingConnectionFactory("localhost");
+    Receiver receiver() {
+        return new Receiver();
     }
 
-    @Bean
-    Queue queue() {
-        return new Queue(queueName, false);
-    }
-
-    @Bean
-    TopicExchange exchange() {
-        return new TopicExchange("spring-boot-exchange");
-    }
-
-    @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
-        return  BindingBuilder
-                .bind(queue)
-                .to(exchange)
-                .with(queueName);
-    }
-
-    @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(queueName);
-        container.setMessageListener(listenerAdapter());
-        return container;
-    }
-    
-    @Bean
-    MessageListenerAdapter listenerAdapter() {
-        return new MessageListenerAdapter(new Receiver(), "receiveMessage");
-    }
-    
-    @Bean
-    RabbitTemplate template(ConnectionFactory connectionFactory) {
-        return new RabbitTemplate(connectionFactory);
-    }
-
-    // Needed to dynamically create queues on demand
-    @Bean
-    AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
-        return new RabbitAdmin(connectionFactory);
-    }
-
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+	@Bean
+	MessageListenerAdapter listenerAdapter(Receiver receiver) {
+		return new MessageListenerAdapter(receiver, "receiveMessage");
+	}
 
     public static void main(String[] args) throws InterruptedException {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
-        System.out.println("Waiting five seconds...");
-        Thread.sleep(5000);
-        RabbitTemplate template = ctx.getBean(RabbitTemplate.class);
-        System.out.println("Sending message...");
-        template.convertAndSend(queueName, "Hello from RabbitMQ!");
-        ctx.close();
+        SpringApplication.run(Application.class, args);
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("Waiting five seconds...");
+        Thread.sleep(5000);
+        System.out.println("Sending message...");
+        rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
+    }
 }
 ```
-
-This example sets up a `CachingConnectionFactory` to your locally run RabbitMQ broker. That connection factory is injected into both the message listener container and the Rabbit template.
 
 The bean defined in the `listenerAdapter()` method is registered as a message listener in the container defined in `container()`. It will listen for messages on the "chat" queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the `MessageListenerAdapter`, where you specify it to invoke `receiveMessage`.
 
 > **Note:** JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see [Understanding AMQP]().
 
-The connection factory and message listener container beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
+The message listener container and receiver beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
 
 The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic exchange. The `binding()` method binds these two together, defining the behavior that occurs when RabbitTemplate publishes to an exchange.
 
@@ -273,7 +270,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:0.5.0.M4")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:0.5.0.M6")
     }
 }
 ```
