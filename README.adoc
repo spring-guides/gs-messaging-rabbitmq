@@ -14,7 +14,6 @@ include::https://raw.github.com/spring-guides/getting-started-macros/master/prer
 +
 - RabbitMQ server (installation instructions below)
 
-:jump_ahead: Create a RabbitMQ message receiver
 include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
 
