@@ -1,0 +1,123 @@
+:spring_boot_version: 0.5.0.M6
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-messaging-rabbitmq
+This guide walks you through the process of setting up a RabbitMQ AMQP server that  publishes and subscribes to messages.
+
+== What you'll build
+
+You'll build an application that publishes a message using Spring AMQP's `RabbitTemplate` and subscribes to the message on a POJO using `MessageListenerAdapter`.
+
+== What you'll need
+include::https://raw.github.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
++
+- RabbitMQ server (installation instructions below)
+
+:jump_ahead: Create a RabbitMQ message receiver
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+
+[[scratch]]
+== Set up the project
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/build_system_intro.adoc[]
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/create_directory_structure_hello.adoc[]
+
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/create_both_builds.adoc[]
+
+`build.gradle`
+// AsciiDoc source formatting doesn't support groovy, so using java instead
+[source,java]
+----
+include::initial/build.gradle[]
+----
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/bootstrap_starter_pom_disclaimer.adoc[]
+
+
+Before you can build your messaging application, you need to set up the server that will handle receiving and sending messages.
+
+RabbitMQ is an AMQP server. The server is freely available at http://www.rabbitmq.com/download.html. You can download it manually, or if you are using a Mac with homebrew:
+
+----
+brew install rabbitmq
+----
+
+Unpack the server and launch it with default settings.
+
+----
+rabbitmq-server
+----
+
+You should see something like this:
+
+....
+            RabbitMQ 3.1.3. Copyright (C) 2007-2013 VMware, Inc.
+##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
+##  ##
+##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
+######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
+##########
+            Starting broker... completed with 6 plugins.
+....
+
+[[initial]]
+== Create a RabbitMQ message receiver
+
+With any messaging-based application, you need to create a receiver that will respond to published messages.
+
+`src/main/java/hello/Receiver.java`
+[source,java]
+----
+include::complete/src/main/java/hello/Receiver.java[]
+----
+
+The `Receiver` is a simple POJO that defines a method for receiving messages. When you register it to receive messages, you can name it anything you want.
+
+NOTE: For convenience, this POJO also has an autowired `AnnotationConfigApplicationContext`. This empowers it to shutdown the app once the message is receive. This is something you are not likely to implement in a production application.
+
+== Register the listener and send a message
+
+Spring AMQP's `RabbitTemplate` provides everything you need to send and receive messages with RabbitMQ. Specifically, you need to configure:
+
+- A message listener container
+- Declare the queue, the exchange, and the binding between them
+
+NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
+
+You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
+
+`src/main/java/hello/Application.java`
+[source,java]
+----
+include::complete/src/main/java/hello/Application.java[]
+----
+
+The bean defined in the `listenerAdapter()` method is registered as a message listener in the container defined in `container()`. It will listen for messages on the "chat" queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the `MessageListenerAdapter`, where you specify it to invoke `receiveMessage`.
+
+NOTE: JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see link:/understanding/AMQP[Understanding AMQP].
+
+The message listener container and receiver beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
+
+The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic exchange. The `binding()` method binds these two together, defining the behavior that occurs when RabbitTemplate publishes to an exchange.
+
+NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
+
+The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. It then retrieves the `RabbitTemplate` from the application context, waits five seconds, and sends a "Hello from RabbitMQ!" message on the "chat" queue. Finally, the container closes the Spring application context and the application ends.
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/build_an_executable_jar_mainhead.adoc[]
+include::https://raw.github.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/run_the_application_with_both.adoc[]
+
+You should see the following output:
+
+    Sending message...
+    Received <Hello from RabbitMQ!>
+
+== Summary
+Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's http://docs.spring.io/spring-amqp/reference/html/quick-tour.html[more you can do with Spring and RabbitMQ] than what is covered here, but this should provide a good start.
+
