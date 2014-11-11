@@ -1,17 +1,18 @@
-
 package hello;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import java.util.concurrent.CountDownLatch;
 
 public class Receiver {
 
-	@Autowired
-	AnnotationConfigApplicationContext context;
+	private CountDownLatch latch = new CountDownLatch(1);
 
 	public void receiveMessage(String message) {
-        System.out.println("Received <" + message + ">");
-        this.context.close();
-    }
+		System.out.println("Received <" + message + ">");
+		latch.countDown();
+	}
+
+	public CountDownLatch getLatch() {
+		return latch;
+	}
+
 }
