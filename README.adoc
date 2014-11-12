@@ -2,7 +2,7 @@
 tags: [messaging, rabbitmq]
 projects: [spring-amqp]
 ---
-:spring_boot_version: 1.1.8.RELEASE
+:spring_boot_version: 1.1.9.RELEASE
 :toc:
 :icons: font
 :source-highlighter: prettify
