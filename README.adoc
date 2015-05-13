@@ -28,7 +28,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
 
-
+== Set up RabbitMQ broker
 Before you can build your messaging application, you need to set up the server that will handle receiving and sending messages.
 
 RabbitMQ is an AMQP server. The server is freely available at http://www.rabbitmq.com/download.html. You can download it manually, or if you are using a Mac with homebrew:
