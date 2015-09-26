@@ -11,7 +11,7 @@ This guide walks you through the process of setting up a RabbitMQ AMQP server th
 
 == What you'll build
 
-You'll build an application that publishes a message using Spring AMQP's `RabbitTemplate` and subscribes to the message on a POJO using `MessageListenerAdapter`.
+You'll build an application that publishes a message using Spring AMQP's `RabbitTemplate` and subscribes to the message on a link:/understanding/POJO[POJO] using `MessageListenerAdapter`.
 
 == What you'll need
 :java_version: 1.8
