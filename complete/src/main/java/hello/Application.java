@@ -11,23 +11,17 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
-public class Application implements CommandLineRunner {
+public class Application {
 
     final static String queueName = "spring-boot";
-
-    @Autowired
-    AnnotationConfigApplicationContext context;
-
-    @Autowired
-    RabbitTemplate rabbitTemplate;
 
     @Bean
     Queue queue() {
@@ -68,13 +62,15 @@ public class Application implements CommandLineRunner {
         SpringApplication.run(Application.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("Waiting five seconds...");
-        Thread.sleep(5000);
-        System.out.println("Sending message...");
-        rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
-        receiver().getLatch().await(10000, TimeUnit.MILLISECONDS);
-        context.close();
+    @Bean
+    @Profile("!test")
+    public CommandLineRunner runner(AnnotationConfigApplicationContext context,
+            RabbitTemplate rabbitTemplate) throws Exception {
+        return args -> {
+            System.out.println("Sending message...");
+            rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
+            receiver().getLatch().await(10000, TimeUnit.MILLISECONDS);
+            context.close();
+        };
     }
 }

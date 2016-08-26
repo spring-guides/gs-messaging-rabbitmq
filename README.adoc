@@ -1,6 +1,6 @@
 ---
-tags: [messaging, rabbitmq]
-projects: [spring-amqp]
+tags: [messaging, rabbitmq, stream]
+projects: [spring-amqp,spring-cloud-stream]
 ---
 :spring_boot_version: 1.4.0.RELEASE
 :toc:
@@ -56,6 +56,20 @@ You should see something like this:
             Starting broker... completed with 6 plugins.
 ....
 
+You can also use https://docs.docker.com/compose/[Docker Compose] to quickly launch a RabbitMQ server if you have docker running locally. There is a `docker-compose.yml` in the root of the "complete" project in Github. It is very simple:
+
+`docker-compose.yml`
+[source,yaml]
+----
+rabbitmq:
+  image: rabbitmq:management
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+----
+
+With this file in the current directory you can run `docker-compose up` to get RabbitMQ running in a container.
+
 [[initial]]
 == Create a RabbitMQ message receiver
 
@@ -107,7 +121,9 @@ The `queue()` method creates an AMQP queue. The `exchange()` method creates a to
 
 NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
 
-The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. There is a `run()` method which is then automatically executed: it then retrieves the `RabbitTemplate` from the application context, waits five seconds, and sends a "Hello from RabbitMQ!" message on the "spring-boot" queue. Finally, it closes the Spring application context and the application ends.
+The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. There is a `runner()` bean which is then automatically executed: it then retrieves the `RabbitTemplate` from the application context and sends a "Hello from RabbitMQ!" message on the "spring-boot" queue. Finally, it closes the Spring application context and the application ends.
+
+NOTE: The `runner()` bean is a `CommandLineRunner` but it is only instantiated if the application is *not* running in the "test" profile. For more information on profiles see link:/understanding/profiles[Understanding Profiles]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_mainhead.adoc[]
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
