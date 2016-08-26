@@ -18,31 +18,31 @@ package hello;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class ApplicationTest {
+@Component
+public class Runner implements CommandLineRunner {
 
-    @MockBean
-    private Runner runner;
+    private final RabbitTemplate rabbitTemplate;
+    private final Receiver receiver;
+    private final ConfigurableApplicationContext context;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    public Runner(Receiver receiver, RabbitTemplate rabbitTemplate,
+            ConfigurableApplicationContext context) {
+        this.receiver = receiver;
+        this.rabbitTemplate = rabbitTemplate;
+        this.context = context;
+    }
 
-    @Autowired
-    private Receiver receiver;
-
-    @Test
-    public void test() throws Exception {
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("Sending message...");
         rabbitTemplate.convertAndSend(Application.queueName, "Hello from RabbitMQ!");
         receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+        context.close();
     }
 
 }
