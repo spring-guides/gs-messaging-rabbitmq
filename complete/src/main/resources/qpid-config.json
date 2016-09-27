@@ -1,0 +1,40 @@
+{
+  "name": "${broker.name}",
+  "modelVersion": "2.0",
+  "defaultVirtualHost" : "default",
+  "authenticationproviders" : [ {
+    "name" : "noPassword",
+    "type" : "Anonymous",
+    "secureOnlyMechanisms": []
+        },
+    {
+      "name" : "passwordFile",
+      "type" : "PlainPasswordFile",
+      "path" : "${qpid.home_dir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}passwd.txt",
+      "secureOnlyMechanisms": [],
+      "preferencesproviders" : [{
+        "name": "fileSystemPreferences",
+        "type": "FileSystemPreferences",
+        "path" : "${qpid.work_dir}${file.separator}user.preferences.json"
+        }
+      ]
+    }
+   ],
+  "ports" : [
+    {
+      "name": "AMQP",
+      "port": "${qpid.amqp_port}",
+      "authenticationProvider": "passwordFile",
+      "protocols": [
+        "AMQP_0_10",
+        "AMQP_0_8",
+        "AMQP_0_9",
+        "AMQP_0_9_1"
+      ]
+    }],
+  "virtualhostnodes" : [ {
+    "name" : "default",
+    "type" : "JSON",
+    "virtualHostInitialConfiguration" : "{ \"type\" : \"Memory\" }"
+  } ]
+}

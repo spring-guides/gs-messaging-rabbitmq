@@ -27,5 +27,10 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-amqp")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    //for QPid
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.apache.qpid:qpid-broker:6.0.4"){
+        exclude group: 'ch.qos.logback'
+    }
 }
 

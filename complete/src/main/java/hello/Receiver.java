@@ -1,7 +1,10 @@
 package hello;
 
+import org.springframework.stereotype.Service;
+
 import java.util.concurrent.CountDownLatch;
 
+@Service
 public class Receiver {
 
     private CountDownLatch latch = new CountDownLatch(1);
