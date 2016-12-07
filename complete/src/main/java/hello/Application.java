@@ -1,4 +1,3 @@
-
 package hello;
 
 import org.springframework.amqp.core.Binding;
@@ -40,11 +39,6 @@ public class Application {
         container.setQueueNames(queueName);
         container.setMessageListener(listenerAdapter);
         return container;
-    }
-
-    @Bean
-    Receiver receiver() {
-        return new Receiver();
     }
 
     @Bean

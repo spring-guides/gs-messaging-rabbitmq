@@ -91,6 +91,7 @@ Spring AMQP's `RabbitTemplate` provides everything you need to send and receive 
 
 - A message listener container
 - Declare the queue, the exchange, and the binding between them
+- A component to send some messages to test the listener
 
 NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
 
@@ -114,7 +115,21 @@ The `queue()` method creates an AMQP queue. The `exchange()` method creates a to
 
 NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
 
-The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. There is a `Runner` bean which is then automatically executed: it then retrieves the `RabbitTemplate` from the application context and sends a "Hello from RabbitMQ!" message on the "spring-boot" queue. Finally, it closes the Spring application context and the application ends.
+== Send a Test Message
+
+Test messages are sent by a `CommandLineRunner`, which also waits for the latch in the receiver and closes the application context:
+
+`src/main/java/hello/Runner.java`
+[source,java]
+----
+include::complete/src/main/java/hello/Runner.java[]
+----
+
+The runner can be mocked out in tests, so that the receiver can be tested in isolation.
+
+== Run the Application
+
+The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. There is a `Runner` bean which is then automatically executed: it retrieves the `RabbitTemplate` from the application context and sends a "Hello from RabbitMQ!" message on the "spring-boot" queue. Finally, it closes the Spring application context and the application ends.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_mainhead.adoc[]
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
