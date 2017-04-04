@@ -1,3 +1,8 @@
+My adaptation of the official sample, using a local, in memory QPid broker in place of RabbitMq.
+
+ running mvn clean package should run ApplicationTest with the right profile ("qpid") and be successful.
+
+
 ---
 tags: [messaging, rabbitmq, stream]
 projects: [spring-amqp,spring-cloud-stream]
