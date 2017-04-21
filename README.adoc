@@ -95,6 +95,12 @@ Spring AMQP's `RabbitTemplate` provides everything you need to send and receive 
 
 NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
 
+`src/main/java/hello/Runner.java`
+[source,java]
+----
+include::complete/src/main/java/hello/Runner.java[]
+----
+
 You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
 
 `src/main/java/hello/Application.java`
