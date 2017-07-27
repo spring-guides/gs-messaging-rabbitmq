@@ -2,7 +2,7 @@
 tags: [messaging, rabbitmq, stream]
 projects: [spring-amqp,spring-cloud-stream]
 ---
-:spring_boot_version: 1.5.5.RELEASE
+:spring_boot_version: 1.5.6.RELEASE
 :toc:
 :icons: font
 :source-highlighter: prettify
