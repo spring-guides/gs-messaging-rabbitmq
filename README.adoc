@@ -95,7 +95,7 @@ Spring AMQP's `RabbitTemplate` provides everything you need to send and receive 
 
 NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
 
-You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server. 
+You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server.
 
 `src/main/java/hello/Application.java`
 [source,java]
@@ -142,6 +142,12 @@ You should see the following output:
 == Summary
 Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's http://docs.spring.io/spring-amqp/reference/html/_introduction.html#quick-tour[more you can do with Spring and RabbitMQ] than what is covered here, but this should provide a good start.
 
+== See Also
+
+The following guides may also be helpful:
+
+* https://spring.io/guides/gs/messaging-redis/[Messaging with Redis]
+* https://spring.io/guides/gs/messaging-jms/[Messaging with JMS]
+* https://spring.io/guides/gs/spring-boot/[Building an Application with Spring Boot]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
-
