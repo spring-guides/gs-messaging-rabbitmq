@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class Application {
 
-    final static String queueName = "spring-boot";
+    static final String topicExchangeName = "spring-boot-exchange";
+
+    static final String queueName = "spring-boot";
 
     @Bean
     Queue queue() {
@@ -23,12 +25,12 @@ public class Application {
 
     @Bean
     TopicExchange exchange() {
-        return new TopicExchange("spring-boot-exchange");
+        return new TopicExchange(topicExchangeName);
     }
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(queueName);
+        return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#");
     }
 
     @Bean
@@ -47,7 +49,7 @@ public class Application {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Application.class, args).close();
     }
 
 }
