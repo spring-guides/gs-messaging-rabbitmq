@@ -115,6 +115,8 @@ The `queue()` method creates an AMQP queue. The `exchange()` method creates a to
 
 NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
 
+In this case, we use a topic exchange and the queue is bound with routing key `foo.bar.#` which means any message sent with a routing key beginning with `foo.bar.` will be routed to the queue.
+
 == Send a Test Message
 
 Test messages are sent by a `CommandLineRunner`, which also waits for the latch in the receiver and closes the application context:
@@ -124,6 +126,8 @@ Test messages are sent by a `CommandLineRunner`, which also waits for the latch 
 ----
 include::complete/src/main/java/hello/Runner.java[]
 ----
+
+Notice that the template routes the message to the exchange, with a routing key of `foo.bar.baz` which matches the binding.
 
 The runner can be mocked out in tests, so that the receiver can be tested in isolation.
 
