@@ -28,7 +28,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 == Set up RabbitMQ broker
 Before you can build your messaging application, you need to set up the server that will handle receiving and sending messages.
 
-RabbitMQ is an AMQP server. The server is freely available at http://www.rabbitmq.com/download.html. You can download it manually, or if you are using a Mac with homebrew:
+RabbitMQ is an AMQP server. The server is freely available at https://www.rabbitmq.com/download.html. You can download it manually, or if you are using a Mac with homebrew:
 
 ----
 brew install rabbitmq
@@ -44,7 +44,7 @@ You should see something like this:
 
 ....
             RabbitMQ 3.1.3. Copyright (C) 2007-2013 VMware, Inc.
-##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
+##  ##      Licensed under the MPL.  See https://www.rabbitmq.com/
 ##  ##
 ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
 ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
@@ -140,7 +140,7 @@ You should see the following output:
     Received <Hello from RabbitMQ!>
 
 == Summary
-Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's http://docs.spring.io/spring-amqp/reference/html/_introduction.html#quick-tour[more you can do with Spring and RabbitMQ] than what is covered here, but this should provide a good start.
+Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's https://docs.spring.io/spring-amqp/reference/html/_introduction.html#quick-tour[more you can do with Spring and RabbitMQ] than what is covered here, but this should provide a good start.
 
 == See Also
 
