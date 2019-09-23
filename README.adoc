@@ -3,46 +3,58 @@
 :icons: font
 :source-highlighter: prettify
 :project_id: gs-messaging-rabbitmq
-This guide walks you through the process of setting up a RabbitMQ AMQP server that  publishes and subscribes to messages.
 
-== What you'll build
+This guide walks you through the process of setting up a RabbitMQ AMQP server that
+publishes and subscribes to messages and creating a Spring Boot application to interact
+with that RabbitMQ server.
 
-You'll build an application that publishes a message using Spring AMQP's `RabbitTemplate` and subscribes to the message on a link:/understanding/POJO[POJO] using `MessageListenerAdapter`.
+== What You Will Build
 
-== What you'll need
+You will build an application that publishes a message by using Spring AMQP's
+`RabbitTemplate` and subscribes to the message on a POJO by using
+`MessageListenerAdapter`.
+
+== What You Need
+
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
 +
-- RabbitMQ server (installation instructions below)
+- Set up the RabbitMQ server. See <<scratch>>.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
+[[scratch]]
+== Set up the RabbitMQ Broker
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
+Before you can build your messaging application, you need to set up a server to handle
+receiving and sending messages.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
+RabbitMQ is an AMQP server. The server is freely available at
+https://www.rabbitmq.com/download.html. You can download it manually or, if you use
+a Mac with Homebrew, by running the following command in a terminal window:
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
-
-
-== Set up RabbitMQ broker
-Before you can build your messaging application, you need to set up the server that will handle receiving and sending messages.
-
-RabbitMQ is an AMQP server. The server is freely available at https://www.rabbitmq.com/download.html. You can download it manually, or if you are using a Mac with homebrew:
-
+====
+[source,bash]
 ----
 brew install rabbitmq
 ----
+====
 
-Unpack the server and launch it with default settings.
+Unpack the server and launch it with default settings by running the following command in
+a terminal window:
 
+====
+[source,bash]
 ----
 rabbitmq-server
 ----
+====
 
-You should see something like this:
+You should see output similar to the following:
 
-....
+====
+[source,bash]
+----
             RabbitMQ 3.1.3. Copyright (C) 2007-2013 VMware, Inc.
 ##  ##      Licensed under the MPL.  See https://www.rabbitmq.com/
 ##  ##
@@ -50,11 +62,15 @@ You should see something like this:
 ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
 ##########
             Starting broker... completed with 6 plugins.
-....
+----
+====
 
-You can also use https://docs.docker.com/compose/[Docker Compose] to quickly launch a RabbitMQ server if you have docker running locally. There is a `docker-compose.yml` in the root of the "complete" project in Github. It is very simple:
+You can also use https://docs.docker.com/compose/[Docker Compose] to quickly launch a
+RabbitMQ server if you have Docker running locally. There is a `docker-compose.yml` in the
+root of the `complete` project in Github. It is very simple, as the following listing
+shows:
 
-`docker-compose.yml`
+====
 [source,yaml]
 ----
 rabbitmq:
@@ -63,84 +79,161 @@ rabbitmq:
     - "5672:5672"
     - "15672:15672"
 ----
-
-With this file in the current directory you can run `docker-compose up` to get RabbitMQ running in a container.
+====
+With this file in the current directory, you can run `docker-compose up` to get RabbitMQ
+running in a container.
 
 [[initial]]
-== Create a RabbitMQ message receiver
+== Starting with Spring Initializr
 
-With any messaging-based application, you need to create a receiver that will respond to published messages.
+For all Spring applications, you should start with the https://start.spring.io[Spring
+Initializr]. The Initializr offers a fast way to pull in all the dependencies you need for
+an application and does a lot of the set up for you. This example needs only the Spring
+for RabbitMQ dependency. The following image shows the Initializr set up for this sample
+project:
 
-`src/main/java/hello/Receiver.java`
+image::images/initializr.png[]
+
+NOTE: The preceding image shows the Initializr with Maven chosen as the build tool. You
+can also use Gradle. It also shows values of `com.example` and `messaging-rabbitmq` as the
+Group and Artifact, respectively. You will use those values throughout the rest of this
+sample.
+
+The following listing shows the `pom.xml` file that is created when you choose Maven:
+
+====
+[src,xml]
+----
+include::complete/pom.xml[]
+----
+====
+
+The following listing shows the `build.gradle` file that is created when you choose Gradle:
+
+====
+[src,java]
+----
+include::complete/build.gradle[]
+----
+====
+
+== Create a RabbitMQ Message Receiver
+
+With any messaging-based application, you need to create a receiver that responds to
+published messages. The following listing (from
+`src/main/java/com.example.messagingrabbitmq/Receiver.java`) shows how to do so:
+
+====
 [source,java]
 ----
-include::complete/src/main/java/hello/Receiver.java[]
+include::complete/src/main/java/com.example.messagingrabbitmq/Receiver.java[]
 ----
+====
 
-The `Receiver` is a simple POJO that defines a method for receiving messages. When you register it to receive messages, you can name it anything you want.
+The `Receiver` is a POJO that defines a method for receiving messages. When you register
+it to receive messages, you can name it anything you want.
 
-NOTE: For convenience, this POJO also has a `CountDownLatch`. This allows it to signal that the message is received. This is something you are not likely to implement in a production application.
+NOTE: For convenience, this POJO also has a `CountDownLatch`. This lets it signal that the
+message has been received. This is something you are not likely to implement in a
+production application.
 
-== Register the listener and send a message
+== Register the Listener and Send a Message
 
-Spring AMQP's `RabbitTemplate` provides everything you need to send and receive messages with RabbitMQ. Specifically, you need to configure:
+Spring AMQP's `RabbitTemplate` provides everything you need to send and receive messages
+with RabbitMQ. However, you need to:
 
-- A message listener container
-- Declare the queue, the exchange, and the binding between them
-- A component to send some messages to test the listener
+- Configure a message listener container.
+- Declare the queue, the exchange, and the binding between them.
+- Configure a component to send some messages to test the listener.
 
-NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate, reducing the amount of code you have to write.
+NOTE: Spring Boot automatically creates a connection factory and a RabbitTemplate,
+reducing the amount of code you have to write.
 
-You'll use `RabbitTemplate` to send messages, and you will register a `Receiver` with the message listener container to receive messages. The connection factory drives both, allowing them to connect to the RabbitMQ server.
+You will use `RabbitTemplate` to send messages, and you will register a `Receiver` with
+the message listener container to receive messages. The connection factory drives both,
+letting them connect to the RabbitMQ server. The following listing (from
+`src/main/java/com.example.messagingrabbitmq/MessagingRabbitApplication.java`) shows how
+to create the application class:
 
-`src/main/java/hello/Application.java`
+====
 [source,java]
 ----
-include::complete/src/main/java/hello/Application.java[]
+include::complete/src/main/java/com.example.messagingrabbitmq/MessagingRabbitApplication.java[]
 ----
+====
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application-new-path.adoc[]
 
-The bean defined in the `listenerAdapter()` method is registered as a message listener in the container defined in `container()`. It will listen for messages on the "spring-boot" queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the `MessageListenerAdapter`, where you specify it to invoke `receiveMessage`.
+The bean defined in the `listenerAdapter()` method is registered as a message listener in
+the container (defined in `container()`). It listens for messages on the `spring-boot`
+queue. Because the `Receiver` class is a POJO, it needs to be wrapped in the
+`MessageListenerAdapter`, where you specify that it invokes `receiveMessage`.
 
-NOTE: JMS queues and AMQP queues have different semantics. For example, JMS sends queued messages to only one consumer. While AMQP queues do the same thing, AMQP producers don't send messages directly to queues. Instead, a message is sent to an exchange, which can go to a single queue, or fanout to multiple queues, emulating the concept of JMS topics. For more, see link:/understanding/AMQP[Understanding AMQP].
+NOTE: JMS queues and AMQP queues have different semantics. For example, JMS sends queued
+messages to only one consumer. While AMQP queues do the same thing, AMQP producers do not
+send messages directly to queues. Instead, a message is sent to an exchange, which can go
+to a single queue or fan out to multiple queues, emulating the concept of JMS topics.
 
-The message listener container and receiver beans are all you need to listen for messages. To send a message, you also need a Rabbit template.
+The message listener container and receiver beans are all you need to listen for messages.
+To send a message, you also need a Rabbit template.
 
-The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic exchange. The `binding()` method binds these two together, defining the behavior that occurs when RabbitTemplate publishes to an exchange.
+The `queue()` method creates an AMQP queue. The `exchange()` method creates a topic
+exchange. The `binding()` method binds these two together, defining the behavior that
+occurs when `RabbitTemplate` publishes to an exchange.
 
-NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be declared as top level Spring beans in order to be set up properly.
+NOTE: Spring AMQP requires that the `Queue`, the `TopicExchange`, and the `Binding` be
+declared as top-level Spring beans in order to be set up properly.
 
-In this case, we use a topic exchange and the queue is bound with routing key `foo.bar.#` which means any message sent with a routing key beginning with `foo.bar.` will be routed to the queue.
+In this case, we use a topic exchange, and the queue is bound with a routing key of
+`foo.bar.#`, which means that any messages sent with a routing key that begins with
+`foo.bar.` are routed to the queue.
 
 == Send a Test Message
 
-Test messages are sent by a `CommandLineRunner`, which also waits for the latch in the receiver and closes the application context:
+In this sample, test messages are sent by a `CommandLineRunner`, which also waits for the
+latch in the receiver and closes the application context. The following listing (from
+`src/main/java/com.example.messagingrabbitmq/Runner.java`) shows how it works:
 
-`src/main/java/hello/Runner.java`
+====
 [source,java]
 ----
-include::complete/src/main/java/hello/Runner.java[]
+include::complete/src/main/java/com.example.messagingrabbitmq/Runner.java[]
 ----
+====
 
-Notice that the template routes the message to the exchange, with a routing key of `foo.bar.baz` which matches the binding.
+Notice that the template routes the message to the exchange with a routing key of
+`foo.bar.baz`, which matches the binding.
 
-The runner can be mocked out in tests, so that the receiver can be tested in isolation.
+In tests, you can mock out the runner so that the receiver can be tested in isolation.
 
 == Run the Application
 
-The `main()` method starts that process by creating a Spring application context. This starts the message listener container, which will start listening for messages. There is a `Runner` bean which is then automatically executed: it retrieves the `RabbitTemplate` from the application context and sends a "Hello from RabbitMQ!" message on the "spring-boot" queue. Finally, it closes the Spring application context and the application ends.
+The `main()` method starts that process by creating a Spring application context. This
+starts the message listener container, which starts listening for messages. There is a
+`Runner` bean, which is then automatically run. It retrieves the `RabbitTemplate` from the
+application context and sends a `Hello from RabbitMQ!` message on the `spring-boot` queue.
+Finally, it closes the Spring application context, and the application ends.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_mainhead.adoc[]
+
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
 
 You should see the following output:
 
+====
+[source,bash]
+----
     Sending message...
     Received <Hello from RabbitMQ!>
+----
+====
 
 == Summary
-Congratulations! You've just developed a simple publish-and-subscribe application with Spring and RabbitMQ. There's https://docs.spring.io/spring-amqp/reference/#_introduction[more you can do with Spring and RabbitMQ] than what is covered here, but this should provide a good start.
+
+Congratulations! You have just developed a simple publish-and-subscribe application with
+Spring and RabbitMQ. You can do more with
+https://docs.spring.io/spring-amqp/reference/#_introduction[Spring and RabbitMQ]
+than what is covered here, but this guide should provide a good start.
 
 == See Also
 

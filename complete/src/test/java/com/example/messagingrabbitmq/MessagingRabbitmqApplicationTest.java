@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hello;
+package com.example.messagingrabbitmq;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ApplicationTest {
+public class MessagingRabbitmqApplicationTest {
 
     @MockBean
     private Runner runner;
@@ -41,7 +41,7 @@ public class ApplicationTest {
 
     @Test
     public void test() throws Exception {
-        rabbitTemplate.convertAndSend(Application.queueName, "Hello from RabbitMQ!");
+        rabbitTemplate.convertAndSend(MessagingRabbitmqApplication.queueName, "Hello from RabbitMQ!");
         receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
     }
 
