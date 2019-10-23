@@ -1,4 +1,4 @@
-package hello;
+package com.example.messagingrabbitmq;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class Application {
+public class MessagingRabbitmqApplication {
 
     static final String topicExchangeName = "spring-boot-exchange";
 
@@ -49,7 +49,7 @@ public class Application {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        SpringApplication.run(Application.class, args).close();
+        SpringApplication.run(MessagingRabbitmqApplication.class, args).close();
     }
 
 }

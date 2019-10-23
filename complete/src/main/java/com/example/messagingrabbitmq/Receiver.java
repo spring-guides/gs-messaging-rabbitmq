@@ -1,4 +1,4 @@
-package hello;
+package com.example.messagingrabbitmq;
 
 import java.util.concurrent.CountDownLatch;
 import org.springframework.stereotype.Component;
