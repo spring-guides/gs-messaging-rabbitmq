@@ -152,13 +152,13 @@ reducing the amount of code you have to write.
 You will use `RabbitTemplate` to send messages, and you will register a `Receiver` with
 the message listener container to receive messages. The connection factory drives both,
 letting them connect to the RabbitMQ server. The following listing (from
-`src/main/java/com.example.messagingrabbitmq/MessagingRabbitApplication.java`) shows how
+`src/main/java/com.example.messagingrabbitmq/MessagingRabbitmqApplication.java`) shows how
 to create the application class:
 
 ====
 [source,java]
 ----
-include::complete/src/main/java/com/example/messagingrabbitmq/MessagingRabbitApplication.java[]
+include::complete/src/main/java/com/example/messagingrabbitmq/MessagingRabbitmqApplication.java[]
 ----
 ====
 
