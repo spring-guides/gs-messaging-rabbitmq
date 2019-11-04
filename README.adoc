@@ -126,7 +126,7 @@ published messages. The following listing (from
 ====
 [source,java]
 ----
-include::complete/src/main/java/com.example.messagingrabbitmq/Receiver.java[]
+include::complete/src/main/java/com/example/messagingrabbitmq/Receiver.java[]
 ----
 ====
 
@@ -158,7 +158,7 @@ to create the application class:
 ====
 [source,java]
 ----
-include::complete/src/main/java/com.example.messagingrabbitmq/MessagingRabbitApplication.java[]
+include::complete/src/main/java/com/example/messagingrabbitmq/MessagingRabbitApplication.java[]
 ----
 ====
 
@@ -197,7 +197,7 @@ latch in the receiver and closes the application context. The following listing 
 ====
 [source,java]
 ----
-include::complete/src/main/java/com.example.messagingrabbitmq/Runner.java[]
+include::complete/src/main/java/com/example/messagingrabbitmq/Runner.java[]
 ----
 ====
 
