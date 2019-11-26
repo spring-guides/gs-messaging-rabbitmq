@@ -124,7 +124,7 @@ published messages. The following listing (from
 `src/main/java/com.example.messagingrabbitmq/Receiver.java`) shows how to do so:
 
 ====
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/src/main/java/com/example/messagingrabbitmq/Receiver.java[]
 ----
@@ -156,7 +156,7 @@ letting them connect to the RabbitMQ server. The following listing (from
 to create the application class:
 
 ====
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/src/main/java/com/example/messagingrabbitmq/MessagingRabbitApplication.java[]
 ----
@@ -195,7 +195,7 @@ latch in the receiver and closes the application context. The following listing 
 `src/main/java/com.example.messagingrabbitmq/Runner.java`) shows how it works:
 
 ====
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/src/main/java/com/example/messagingrabbitmq/Runner.java[]
 ----

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ *	  https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,25 +29,25 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 public class MessagingRabbitmqApplicationTest {
 
-    @MockBean
-    private Runner runner;
+	@MockBean
+	private Runner runner;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private Receiver receiver;
+	@Autowired
+	private Receiver receiver;
 
-    @Test
-    public void test() throws Exception {
-        try {
-            rabbitTemplate.convertAndSend(MessagingRabbitmqApplication.queueName,
-                    "Hello from RabbitMQ!");
-            receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
-        }
-        catch (AmqpConnectException e) {
-            // ignore - rabbit is not running
-        }
-    }
+	@Test
+	public void test() throws Exception {
+		try {
+			rabbitTemplate.convertAndSend(MessagingRabbitmqApplication.queueName,
+					"Hello from RabbitMQ!");
+			receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+		}
+		catch (AmqpConnectException e) {
+			// ignore - rabbit is not running
+		}
+	}
 
 }
