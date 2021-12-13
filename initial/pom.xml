@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>messaging-rabbitmq-initial</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>gs-messaging-rabbitmq</artifactId>
+	<version>0.1.0</version>
 	<name>messaging-rabbitmq-initial</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
