@@ -1,10 +1,9 @@
 package com.example.messagingrabbitmq;
 
-public class Data {
+import java.io.Serializable;
 
-    Data(String msg) {
-        message = msg;
-    }
+public class Data implements Serializable {
+
 
     String message;
 
