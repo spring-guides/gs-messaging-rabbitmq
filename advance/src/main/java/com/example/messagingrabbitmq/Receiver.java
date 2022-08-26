@@ -8,16 +8,16 @@ import java.util.concurrent.CountDownLatch;
 @Service
 public class Receiver {
 
-	private CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latch = new CountDownLatch(1);
 
-	@RabbitListener(queues = MessagingRabbitmqApplication.queueName)
-	public void receiveMessage(String message) {
-		System.out.println("Received <" + message + ">");
-		latch.countDown();
-	}
+    @RabbitListener(queues = MessagingRabbitmqApplication.queueName, messageConverter = "Jackson2JsonMessageConverter")
+    public void receiveMessage(Data message) {
+        System.out.println("Received <" + message.getMessage() + ">");
+        latch.countDown();
+    }
 
-	public CountDownLatch getLatch() {
-		return latch;
-	}
+    public CountDownLatch getLatch() {
+        return latch;
+    }
 
 }
