@@ -15,7 +15,7 @@ You will build an application that publishes a message by using Spring AMQP's
 
 == What You Need
 
-:java_version: 11
+:java_version: 17
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/prereq_editor_jdk_buildtools.adoc[]
 +
 - Set up the RabbitMQ server. See <<scratch>>.
@@ -85,7 +85,7 @@ running in a container.
 [[initial]]
 == Starting with Spring Initializr
 
-You can use this https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.5.5&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp[pre-initialized project] and click Generate to download a ZIP file. This project is configured to fit the examples in this tutorial.
+You can use this https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.1.0&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp[pre-initialized project] and click Generate to download a ZIP file. This project is configured to fit the examples in this tutorial.
 
 To manually initialize the project:
 
