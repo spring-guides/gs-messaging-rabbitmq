@@ -72,11 +72,7 @@ shows:
 ====
 [source,yaml]
 ----
-rabbitmq:
-  image: rabbitmq:management
-  ports:
-    - "5672:5672"
-    - "15672:15672"
+include::complete/docker-compose.yml[]    
 ----
 ====
 With this file in the current directory, you can run `docker-compose up` to get RabbitMQ
