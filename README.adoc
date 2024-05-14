@@ -5,9 +5,7 @@
 :build_name: messaging-rabbitmq
 :build_version: 0.0.1-SNAPSHOT
 
-This guide walks you through the process of setting up a RabbitMQ AMQP server that
-publishes and subscribes to messages and creating a Spring Boot application to interact
-with that RabbitMQ server.
+This guide walks you through the process creating a Spring Boot application that publishes and subscribes to a RabbitMQ AMQP server.
 
 == What You Will Build
 
@@ -42,6 +40,9 @@ You will add a dependency `spring-boot-docker-compose` that will do the followin
 * Create service connection beans for each supported container
 * Call docker compose stop when the application is shutdown
 
+To use Docker Compose support, you only need to follow this guide.
+Based on the dependencies you pull in, Spring Boot will find the correct `compose.yml` file and start your Docker container when you run your application.
+
 If you choose to run the RabbitMQ server yourself instead of using Spring Boot Docker Compose support, you have a few options:
 
 * https://www.rabbitmq.com/download.html[Download the server^] and manually run it
@@ -55,7 +56,7 @@ To reiterate, this guide will assume that you use Docker Compose support in Spri
 [[initial]]
 == Starting with Spring Initializr
 
-You can use this https://start.spring.io/#!type=maven-project&language=java&packaging=jar&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp,docker-compose[pre-initialized project^] and click Generate to download a ZIP file. This project is configured to fit the examples in this tutorial.
+You can use this https://start.spring.io/#!type=maven-project&language=java&packaging=jar&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp,docker-compose[pre-initialized project^] and click Generate to download a ZIP file. This project is configured to fit the examples in this guide.
 
 To manually initialize the project:
 
@@ -64,7 +65,7 @@ This service pulls in all the dependencies you need for an application and does 
 . Choose either Gradle or Maven and the language you want to use. This guide assumes that you chose Java.
 . Click *Dependencies* and select *Spring for RabbitMQ* and *Docker Compose Support*.
 . Click *Generate*.
-. Download the resulting ZIP file, which is an archive of a web application that is configured with your choices.
+. Download the resulting ZIP file, which is an archive of an application that is configured with your choices.
 
 NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
 
@@ -105,7 +106,7 @@ reducing the amount of code you have to write.
 You will use `RabbitTemplate` to send messages, and you will register a `Receiver` with
 the message listener container to receive messages. The connection factory drives both,
 letting them connect to the RabbitMQ server. The following listing (from
-`src/main/java/com.example.messagingrabbitmq/MessagingRabbitmqApplication.java`) shows how
+`src/main/java/com/example/messagingrabbitmq/MessagingRabbitmqApplication.java`) shows how
 to create the application class:
 
 ====
@@ -175,7 +176,7 @@ The commands `./gradlew bootRun` and `./mvnw spring-boot:run` will launch the ap
 == Preparing to build the Application
 
 In order to run the code without Spring Boot Docker Compose support, you need a version of RabbitMQ running locally to connect to.
-To do this you can use Docker Compose, but you must first make two changes to the `compose.yaml` file provided.
+To do this, you can use Docker Compose, but you must first make two changes to the `compose.yaml` file provided.
 First, modify the `ports` entry in `compose.yaml` to be `'5672:5672'`.
 Second, add a `container_name`.
 
@@ -236,11 +237,13 @@ plugins {
 ...
 ----
 
-Additionally, you need to provide a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.advanced.custom-hints[custom hint^].
+Additionally, you need to provide a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.advanced.custom-hints[custom hint^]. Add a new class `MyRuntimeHints` that implements `RuntimeHintsRegistrar`.
 
 ====
 [source,java,tabsize=2]
 ----
+package com.example.messagingrabbitmq;
+
 import java.lang.reflect.Method;
 
 import org.springframework.aot.hint.ExecutableMode;
