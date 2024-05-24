@@ -5,7 +5,7 @@
 :build_name: messaging-rabbitmq
 :build_version: 0.0.1-SNAPSHOT
 
-This guide walks you through the process creating a Spring Boot application that publishes and subscribes to a RabbitMQ AMQP server.
+This guide walks you through the process of creating a Spring Boot application that publishes and subscribes to a RabbitMQ AMQP server.
 
 == What You Will Build
 
@@ -17,41 +17,41 @@ You will build an application that publishes a message by using Spring AMQP's `R
 * A favorite text editor or IDE
 * https://www.oracle.com/java/technologies/downloads/[Java 17^] or later
 
-== How to complete this guide
-Like most Spring https://spring.io/guides[Getting Started guides^], you can start from scratch and complete each step or you can jump straight to the solution, by viewing the code in https://github.com/spring-guides/{project_id}[this repository^]
+== How to Complete this Guide
+Like most Spring https://spring.io/guides[Getting Started guides^], you can start from scratch and complete each step or you can jump straight to the solution by viewing the code in https://github.com/spring-guides/{project_id}[this repository^]
 
-To **see the end result**, do the following:
+To **see the end result**:
 
-- https://github.com/spring-guides/{project_id}/archive/main.zip[Download^] and unzip the source repository for this guide, or clone it using Git:
+- https://github.com/spring-guides/{project_id}/archive/main.zip[Download^] and unzip the source repository for this guide or clone it using Git:
 `git clone https://github.com/spring-guides/{project_id}.git`
 
-- Set up the RabbitMQ server. See <<scratch>>.
+- Setting up the RabbitMQ server. See <<scratch>>.
 
 [[scratch]]
 == Set up the RabbitMQ Broker
 
 Before you can build your messaging application, you need to set up a server to handle receiving and sending messages.
-This guide assumes that you will use https://docs.spring.io/spring-boot/reference/features/dev-services.html#features.dev-services.docker-compose[Spring Boot Docker Compose support^].
-A pre-requisite of this approach is that your development machine has a Docker environment, such as https://www.docker.com/products/docker-desktop/[Docker Desktop^], available.
-You will add a dependency `spring-boot-docker-compose` that will do the following:
+This guide assumes that you use https://docs.spring.io/spring-boot/reference/features/dev-services.html#features.dev-services.docker-compose[Spring Boot Docker Compose support^].
+A prerequisite of this approach is that your development machine has a Docker environment, such as https://www.docker.com/products/docker-desktop/[Docker Desktop^], available.
+Add a dependency `spring-boot-docker-compose` that does the following:
 
 * Search for a compose.yml and other common compose filenames in your working directory
-* Call docker compose up with the discovered compose.yml
+* Call Docker compose up with the discovered compose.yml
 * Create service connection beans for each supported container
-* Call docker compose stop when the application is shutdown
+* Call Docker compose stop when the application is shutdown
 
-To use Docker Compose support, you only need to follow this guide.
-Based on the dependencies you pull in, Spring Boot will find the correct `compose.yml` file and start your Docker container when you run your application.
+To use Docker Compose support, you need only follow this guide.
+Based on the dependencies you pull in, Spring Boot finds the correct `compose.yml` file and start your Docker container when you run your application.
 
 If you choose to run the RabbitMQ server yourself instead of using Spring Boot Docker Compose support, you have a few options:
 
 * https://www.rabbitmq.com/download.html[Download the server^] and manually run it
-* Install with Homebrew, if you are using a Mac
+* Install with Homebrew, if you use a Mac
 * Manually run the `compose.yaml` file with `docker-compose up`
 
-If you go with any of these alternate approaches, you should remove the `spring-boot-docker-compose` dependency from the Maven/Gradle build file.
+If you go with any of these alternate approaches, you should remove the `spring-boot-docker-compose` dependency from the Maven or Gradle build file.
 You will also need to add configuration to an `application.properties` file, as described in greater detail in the <<_preparing_to_build_the_application>> section.
-To reiterate, this guide will assume that you use Docker Compose support in Spring Boot, so additional changes to `application.properties` are not required at this point.
+As mentioned earlier, this guide assumes that you use Docker Compose support in Spring Boot, so additional changes to `application.properties` are not required at this point.
 
 [[initial]]
 == Starting with Spring Initializr
@@ -69,7 +69,7 @@ This service pulls in all the dependencies you need for an application and does 
 
 NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
 
-NOTE: You can also fork the project from Github and open it in your IDE or other editor. Creating a fork will allow you request changes to this guide through submission of a pull request.
+NOTE: You can also fork the project from Github and open it in your IDE or other editor. Creating a fork allows you request changes to this guide through submission of a pull request.
 
 == Create a RabbitMQ Message Receiver
 
@@ -168,15 +168,15 @@ starts the message listener container, which starts listening for messages. Ther
 application context and sends a `Hello from RabbitMQ!` message on the `spring-boot` queue.
 Finally, it closes the Spring application context, and the application ends.
 
-You can execute the main method through your IDE.
-Note that if you have cloned the project from the solution repository, your IDE may be looking in the wrong place for the `compose.yaml` file.
-You can configure your IDE to look in the correct place, or you could use the command line to run the application.
-The commands `./gradlew bootRun` and `./mvnw spring-boot:run` will launch the application and automatically find the compose.yaml file.
+You can run the main method through your IDE.
+Note that, if you have cloned the project from the solution repository, your IDE may look in the wrong place for the `compose.yaml` file.
+You can configure your IDE to look in the correct place or you could use the command line to run the application.
+The `./gradlew bootRun` and `./mvnw spring-boot:run` commands will launch the application and automatically find the compose.yaml file.
 
-== Preparing to build the Application
+== Preparing to Build the Application
 
-In order to run the code without Spring Boot Docker Compose support, you need a version of RabbitMQ running locally to connect to.
-To do this, you can use Docker Compose, but you must first make two changes to the `compose.yaml` file provided.
+To run the code without Spring Boot Docker Compose support, you need a version of RabbitMQ running locally to connect to.
+To do this, you can use Docker Compose, but you must first make two changes to the `compose.yaml` file.
 First, modify the `ports` entry in `compose.yaml` to be `'5672:5672'`.
 Second, add a `container_name`.
 
@@ -194,9 +194,9 @@ services:
 ----
 
 You can now run `docker-compose up` to start the RabbitMQ service.
-Now you should have an external RabbitMQ server ready to accept requests.
+Now you should have an external RabbitMQ server that is ready to accept requests.
 
-Additionally, we need to tell Spring how to connect to the RabbitMQ server (this was handled automatically with Spring Boot Docker Compose support).
+Additionally, you need to tell Spring how to connect to the RabbitMQ server (this was handled automatically with Spring Boot Docker Compose support).
 Add the following code to a new `application.properties` file in `src/main/resources`:
 ----
 spring.rabbitmq.password=secret
@@ -205,39 +205,39 @@ spring.rabbitmq.username=myuser
 
 == Building the Application
 
-In this section, we will describe four different ways to run this guide:
+This section describes four different ways to run this guide:
 
 1. Building and executing a JAR file
-2. Building and executing a Docker container, using Cloud Native Buildpacks
+2. Building and executing a Docker container using Cloud Native Buildpacks
 3. Building and executing a native image
-4. Building and executing a native image container, using Cloud Native Buildpacks
+4. Building and executing a native image container using Cloud Native Buildpacks
 
 Regardless of how you choose to execute the application, the output should be the same.
 
 To run the application, you can package the application as an executable jar.
 The Gradle command `./gradlew clean build` will compile the application to an executable jar.
-You can then run the jar with the command `java -jar build/libs/{build_name}-{build_version}.jar`
+You can then run the jar with the `java -jar build/libs/{build_name}-{build_version}.jar` command.
 
 Alternatively, if you have a Docker environment available, you could create a Docker image directly from your Maven or Gradle plugin, using buildpacks.
 With https://docs.spring.io/spring-boot/docs/current/reference/html/container-images.html#container-images.buildpacks[Cloud Native Buildpacks^], you can create Docker compatible images that you can run anywhere.
 Spring Boot includes buildpack support directly for both Maven and Gradle.
 This means you can type a single command and quickly get a sensible image into a locally running Docker daemon.
-To create a Docker image using Cloud Native Buildpacks, run the command `./gradlew bootBuildImage`.
-With a Docker environment enabled, you can execute the application with the command `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}`
+To create a Docker image using Cloud Native Buildpacks, run the `./gradlew bootBuildImage` command.
+With a Docker environment enabled, you can run the application with the `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}` command.
 
-NOTE: The `--network` flag tells Docker to attach our guide container to the existing network that our RabbitMQ container is using.
-More information about this can be found in the https://docs.docker.com/network/#container-networks[Docker documentation^].
+NOTE: The `--network` flag tells Docker to attach our guide container to the existing network that our RabbitMQ container uses.
+You can find more information in the https://docs.docker.com/network/#container-networks[Docker documentation^].
 
 === Native Image Support
 
-Spring Boot also supports https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.introducing-graalvm-native-images[compilation to a native image^], provided you have a GraalVM distribution on your machine. To create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.native-build-tools.gradle[native image with Gradle^] using Native Build Tools, first make sure that your Gradle build contains a `plugins` block that includes `org.graalvm.buildtools.native`.
+Spring Boot also supports https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.introducing-graalvm-native-images[compilation to a native image^], provided you have a GraalVM distribution on your machine. To create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.native-build-tools.gradle[native image with Gradle^] using Native Build Tools, first make sure that your Gradle build contains a `plugins` block that includes `org.graalvm.buildtools.native`:
 ----
 plugins {
 	id 'org.graalvm.buildtools.native' version '0.9.28'
 ...
 ----
 
-Additionally, you need to provide a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.advanced.custom-hints[custom hint^]. Add a new class `MyRuntimeHints` that implements `RuntimeHintsRegistrar`.
+Additionally, you need to provide a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.advanced.custom-hints[custom hint^]. Add a new class `MyRuntimeHints` that implements `RuntimeHintsRegistrar`:
 
 ====
 [source,java,tabsize=2]
@@ -275,9 +275,9 @@ public class MessagingRabbitmqApplication {
 ----
 ====
 
-You can then run the command `./gradlew nativeCompile` to generate a native image. When the build completes, you will be able to run the code with a near instantaneous start up time by executing the command `build/native/nativeCompile/{build_name}`.
+You can then run the `./gradlew nativeCompile` command to generate a native image. When the build completes, you will be able to run the code with a near-instantaneous startup time by running the `build/native/nativeCompile/{build_name}` command.
 
-You can also create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.buildpacks[Native Image using Buildpacks^]. Provided that the Gradle `plugins` block contains `org.graalvm.buildtools.native`, you can generate a native image by running the task `./gradlew bootBuildImage`. Once the build completes, you can start your application with the command `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}`
+You can also create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.buildpacks[Native Image using Buildpacks^]. Provided that the Gradle `plugins` block contains `org.graalvm.buildtools.native`, you can generate a native image by running the `./gradlew bootBuildImage` task. Once the build completes, you can start your application with the `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}` command.
 
 Regardless of how you chose to build and run the application, you should see the following output:
 
