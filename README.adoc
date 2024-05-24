@@ -28,7 +28,7 @@ To **see the end result**:
 - Setting up the RabbitMQ server. See <<scratch>>.
 
 [[scratch]]
-== Set up the RabbitMQ Broker
+== Setting up the RabbitMQ Broker
 
 Before you can build your messaging application, you need to set up a server to handle receiving and sending messages.
 This guide assumes that you use https://docs.spring.io/spring-boot/reference/features/dev-services.html#features.dev-services.docker-compose[Spring Boot Docker Compose support^].
@@ -212,10 +212,10 @@ This section describes four different ways to run this guide:
 3. Building and executing a native image
 4. Building and executing a native image container using Cloud Native Buildpacks
 
-Regardless of how you choose to execute the application, the output should be the same.
+Regardless of how you choose to run the application, the output should be the same.
 
 To run the application, you can package the application as an executable jar.
-The Gradle command `./gradlew clean build` will compile the application to an executable jar.
+The `./gradlew clean build` command compiles the application to an executable jar.
 You can then run the jar with the `java -jar build/libs/{build_name}-{build_version}.jar` command.
 
 Alternatively, if you have a Docker environment available, you could create a Docker image directly from your Maven or Gradle plugin, using buildpacks.
