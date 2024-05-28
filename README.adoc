@@ -4,6 +4,10 @@
 :project_id: gs-messaging-rabbitmq
 :build_name: messaging-rabbitmq
 :build_version: 0.0.1-SNAPSHOT
+:java_version: 17
+:build_system: gradle
+:network_container: guide-rabbit
+:omit_native_build: y
 
 This guide walks you through the process of creating a Spring Boot application that publishes and subscribes to a RabbitMQ AMQP server.
 
@@ -11,23 +15,8 @@ This guide walks you through the process of creating a Spring Boot application t
 
 You will build an application that publishes a message by using Spring AMQP's `RabbitTemplate` and subscribes to the message on a POJO by using `MessageListenerAdapter`.
 
-== What You Need
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/guide_introduction.adoc[]
 
-* About 15 minutes
-* A favorite text editor or IDE
-* https://www.oracle.com/java/technologies/downloads/[Java 17^] or later
-
-== How to Complete this Guide
-Like most Spring https://spring.io/guides[Getting Started guides^], you can start from scratch and complete each step or you can jump straight to the solution by viewing the code in https://github.com/spring-guides/{project_id}[this repository^]
-
-To **see the end result**:
-
-- https://github.com/spring-guides/{project_id}/archive/main.zip[Download^] and unzip the source repository for this guide or clone it using Git:
-`git clone https://github.com/spring-guides/{project_id}.git`
-
-- Setting up the RabbitMQ server. See <<scratch>>.
-
-[[scratch]]
 == Setting up the RabbitMQ Broker
 
 Before you can build your messaging application, you need to set up a server to handle receiving and sending messages.
@@ -68,8 +57,6 @@ This service pulls in all the dependencies you need for an application and does 
 . Download the resulting ZIP file, which is an archive of an application that is configured with your choices.
 
 NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
-
-NOTE: You can also fork the project from Github and open it in your IDE or other editor. Creating a fork allows you request changes to this guide through submission of a pull request.
 
 == Create a RabbitMQ Message Receiver
 
@@ -203,28 +190,7 @@ spring.rabbitmq.password=secret
 spring.rabbitmq.username=myuser
 ----
 
-== Building the Application
-
-This section describes different ways to run this guide:
-
-1. Building and executing a JAR file
-2. Building and executing a Docker container using Cloud Native Buildpacks
-
-Regardless of how you choose to run the application, the output should be the same.
-
-To run the application, you can package the application as an executable jar.
-The `./gradlew clean build` command compiles the application to an executable jar.
-You can then run the jar with the `java -jar build/libs/{build_name}-{build_version}.jar` command.
-
-Alternatively, if you have a Docker environment available, you could create a Docker image directly from your Maven or Gradle plugin, using buildpacks.
-With https://docs.spring.io/spring-boot/docs/current/reference/html/container-images.html#container-images.buildpacks[Cloud Native Buildpacks^], you can create Docker compatible images that you can run anywhere.
-Spring Boot includes buildpack support directly for both Maven and Gradle.
-This means you can type a single command and quickly get a sensible image into a locally running Docker daemon.
-To create a Docker image using Cloud Native Buildpacks, run the `./gradlew bootBuildImage` command.
-With a Docker environment enabled, you can run the application with the `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}` command.
-
-NOTE: The `--network` flag tells Docker to attach our guide container to the existing network that our RabbitMQ container uses.
-You can find more information in the https://docs.docker.com/network/#container-networks[Docker documentation^].
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_and_execute_guide.adoc[]
 
 Regardless of how you chose to build and run the application, you should see the following output:
 
