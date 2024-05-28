@@ -2,105 +2,80 @@
 :icons: font
 :source-highlighter: prettify
 :project_id: gs-messaging-rabbitmq
+:build_name: messaging-rabbitmq
+:build_version: 0.0.1-SNAPSHOT
 
-This guide walks you through the process of setting up a RabbitMQ AMQP server that
-publishes and subscribes to messages and creating a Spring Boot application to interact
-with that RabbitMQ server.
+This guide walks you through the process of creating a Spring Boot application that publishes and subscribes to a RabbitMQ AMQP server.
 
 == What You Will Build
 
-You will build an application that publishes a message by using Spring AMQP's
-`RabbitTemplate` and subscribes to the message on a POJO by using
-`MessageListenerAdapter`.
+You will build an application that publishes a message by using Spring AMQP's `RabbitTemplate` and subscribes to the message on a POJO by using `MessageListenerAdapter`.
 
 == What You Need
 
-:java_version: 17
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/prereq_editor_jdk_buildtools.adoc[]
-+
-- Set up the RabbitMQ server. See <<scratch>>.
+* About 15 minutes
+* A favorite text editor or IDE
+* https://www.oracle.com/java/technologies/downloads/[Java 17^] or later
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/how_to_complete_this_guide.adoc[]
+== How to Complete this Guide
+Like most Spring https://spring.io/guides[Getting Started guides^], you can start from scratch and complete each step or you can jump straight to the solution by viewing the code in https://github.com/spring-guides/{project_id}[this repository^]
+
+To **see the end result**:
+
+- https://github.com/spring-guides/{project_id}/archive/main.zip[Download^] and unzip the source repository for this guide or clone it using Git:
+`git clone https://github.com/spring-guides/{project_id}.git`
+
+- Setting up the RabbitMQ server. See <<scratch>>.
 
 [[scratch]]
-== Set up the RabbitMQ Broker
+== Setting up the RabbitMQ Broker
 
-Before you can build your messaging application, you need to set up a server to handle
-receiving and sending messages.
+Before you can build your messaging application, you need to set up a server to handle receiving and sending messages.
+This guide assumes that you use https://docs.spring.io/spring-boot/reference/features/dev-services.html#features.dev-services.docker-compose[Spring Boot Docker Compose support^].
+A prerequisite of this approach is that your development machine has a Docker environment, such as https://www.docker.com/products/docker-desktop/[Docker Desktop^], available.
+Add a dependency `spring-boot-docker-compose` that does the following:
 
-RabbitMQ is an AMQP server. The server is freely available at
-https://www.rabbitmq.com/download.html. You can download it manually or, if you use
-a Mac with Homebrew, by running the following command in a terminal window:
+* Search for a compose.yml and other common compose filenames in your working directory
+* Call Docker compose up with the discovered compose.yml
+* Create service connection beans for each supported container
+* Call Docker compose stop when the application is shutdown
 
-====
-[source,bash]
-----
-brew install rabbitmq
-----
-====
+To use Docker Compose support, you need only follow this guide.
+Based on the dependencies you pull in, Spring Boot finds the correct `compose.yml` file and start your Docker container when you run your application.
 
-Unpack the server and launch it with default settings by running the following command in
-a terminal window:
+If you choose to run the RabbitMQ server yourself instead of using Spring Boot Docker Compose support, you have a few options:
 
-====
-[source,bash]
-----
-rabbitmq-server
-----
-====
+* https://www.rabbitmq.com/download.html[Download the server^] and manually run it
+* Install with Homebrew, if you use a Mac
+* Manually run the `compose.yaml` file with `docker-compose up`
 
-You should see output similar to the following:
-
-====
-[source,bash]
-----
-            RabbitMQ 3.1.3. Copyright (C) 2007-2013 VMware, Inc.
-##  ##      Licensed under the MPL.  See https://www.rabbitmq.com/
-##  ##
-##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
-######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
-##########
-            Starting broker... completed with 6 plugins.
-----
-====
-
-You can also use https://docs.docker.com/compose/[Docker Compose] to quickly launch a
-RabbitMQ server if you have Docker running locally. There is a `docker-compose.yml` in the
-root of the `complete` project in Github. It is very simple, as the following listing
-shows:
-
-====
-[source,yaml]
-----
-include::complete/docker-compose.yml[]    
-----
-====
-With this file in the current directory, you can run `docker-compose up` to get RabbitMQ
-running in a container.
+If you go with any of these alternate approaches, you should remove the `spring-boot-docker-compose` dependency from the Maven or Gradle build file.
+You will also need to add configuration to an `application.properties` file, as described in greater detail in the <<_preparing_to_build_the_application>> section.
+As mentioned earlier, this guide assumes that you use Docker Compose support in Spring Boot, so additional changes to `application.properties` are not required at this point.
 
 [[initial]]
 == Starting with Spring Initializr
 
-You can use this https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.1.0&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp[pre-initialized project] and click Generate to download a ZIP file. This project is configured to fit the examples in this tutorial.
+You can use this https://start.spring.io/#!type=maven-project&language=java&packaging=jar&groupId=com.example&artifactId=messaging-rabbitmq&name=messaging-rabbitmq&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.messaging-rabbitmq&dependencies=amqp,docker-compose[pre-initialized project^] and click Generate to download a ZIP file. This project is configured to fit the examples in this guide.
 
 To manually initialize the project:
 
-. Navigate to https://start.spring.io.
+. Navigate to https://start.spring.io[start.spring.io^].
 This service pulls in all the dependencies you need for an application and does most of the setup for you.
 . Choose either Gradle or Maven and the language you want to use. This guide assumes that you chose Java.
-. Click *Dependencies* and select *Spring for RabbitMQ*.
+. Click *Dependencies* and select *Spring for RabbitMQ* and *Docker Compose Support*.
 . Click *Generate*.
-. Download the resulting ZIP file, which is an archive of a web application that is configured with your choices.
+. Download the resulting ZIP file, which is an archive of an application that is configured with your choices.
 
 NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
 
-NOTE: You can also fork the project from Github and open it in your IDE or other editor.
+NOTE: You can also fork the project from Github and open it in your IDE or other editor. Creating a fork allows you request changes to this guide through submission of a pull request.
 
 == Create a RabbitMQ Message Receiver
 
 With any messaging-based application, you need to create a receiver that responds to
 published messages. The following listing (from
-`src/main/java/com.example.messagingrabbitmq/Receiver.java`) shows how to do so:
+`src/main/java/com/example/messagingrabbitmq/Receiver.java`) shows how to do so:
 
 ====
 [source,java,tabsize=2]
@@ -131,7 +106,7 @@ reducing the amount of code you have to write.
 You will use `RabbitTemplate` to send messages, and you will register a `Receiver` with
 the message listener container to receive messages. The connection factory drives both,
 letting them connect to the RabbitMQ server. The following listing (from
-`src/main/java/com.example.messagingrabbitmq/MessagingRabbitmqApplication.java`) shows how
+`src/main/java/com/example/messagingrabbitmq/MessagingRabbitmqApplication.java`) shows how
 to create the application class:
 
 ====
@@ -141,7 +116,7 @@ include::complete/src/main/java/com/example/messagingrabbitmq/MessagingRabbitmqA
 ----
 ====
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-application-new-path.adoc[]
+The `@SpringBootApplication` annotation offers a number of benefits, as described in the https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#getting-started.first-application.code.spring-boot-application[reference documentation].
 
 The bean defined in the `listenerAdapter()` method is registered as a message listener in
 the container (defined in `container()`). It listens for messages on the `spring-boot`
@@ -193,11 +168,65 @@ starts the message listener container, which starts listening for messages. Ther
 application context and sends a `Hello from RabbitMQ!` message on the `spring-boot` queue.
 Finally, it closes the Spring application context, and the application ends.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_an_executable_jar_mainhead.adoc[]
+You can run the main method through your IDE.
+Note that, if you have cloned the project from the solution repository, your IDE may look in the wrong place for the `compose.yaml` file.
+You can configure your IDE to look in the correct place or you could use the command line to run the application.
+The `./gradlew bootRun` and `./mvnw spring-boot:run` commands will launch the application and automatically find the compose.yaml file.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_an_executable_jar_with_both.adoc[]
+== Preparing to Build the Application
 
-You should see the following output:
+To run the code without Spring Boot Docker Compose support, you need a version of RabbitMQ running locally to connect to.
+To do this, you can use Docker Compose, but you must first make two changes to the `compose.yaml` file.
+First, modify the `ports` entry in `compose.yaml` to be `'5672:5672'`.
+Second, add a `container_name`.
+
+The `compose.yaml` should now be:
+----
+services:
+  rabbitmq:
+    container_name: 'guide-rabbit'
+    image: 'rabbitmq:latest'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    ports:
+      - '5672:5672'
+----
+
+You can now run `docker-compose up` to start the RabbitMQ service.
+Now you should have an external RabbitMQ server that is ready to accept requests.
+
+Additionally, you need to tell Spring how to connect to the RabbitMQ server (this was handled automatically with Spring Boot Docker Compose support).
+Add the following code to a new `application.properties` file in `src/main/resources`:
+----
+spring.rabbitmq.password=secret
+spring.rabbitmq.username=myuser
+----
+
+== Building the Application
+
+This section describes different ways to run this guide:
+
+1. Building and executing a JAR file
+2. Building and executing a Docker container using Cloud Native Buildpacks
+
+Regardless of how you choose to run the application, the output should be the same.
+
+To run the application, you can package the application as an executable jar.
+The `./gradlew clean build` command compiles the application to an executable jar.
+You can then run the jar with the `java -jar build/libs/{build_name}-{build_version}.jar` command.
+
+Alternatively, if you have a Docker environment available, you could create a Docker image directly from your Maven or Gradle plugin, using buildpacks.
+With https://docs.spring.io/spring-boot/docs/current/reference/html/container-images.html#container-images.buildpacks[Cloud Native Buildpacks^], you can create Docker compatible images that you can run anywhere.
+Spring Boot includes buildpack support directly for both Maven and Gradle.
+This means you can type a single command and quickly get a sensible image into a locally running Docker daemon.
+To create a Docker image using Cloud Native Buildpacks, run the `./gradlew bootBuildImage` command.
+With a Docker environment enabled, you can run the application with the `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}` command.
+
+NOTE: The `--network` flag tells Docker to attach our guide container to the existing network that our RabbitMQ container uses.
+You can find more information in the https://docs.docker.com/network/#container-networks[Docker documentation^].
+
+Regardless of how you chose to build and run the application, you should see the following output:
 
 ====
 [source,bash]
@@ -211,10 +240,12 @@ You should see the following output:
 
 Congratulations! You have just developed a simple publish-and-subscribe application with
 Spring and RabbitMQ. You can do more with
-https://docs.spring.io/spring-amqp/reference/#_introduction[Spring and RabbitMQ]
+https://docs.spring.io/spring-amqp/reference/#_introduction[Spring and RabbitMQ^]
 than what is covered here, but this guide should provide a good start.
 
 == See Also
+
+Additional https://github.com/spring-projects/spring-amqp-samples[Spring AMQP Samples]
 
 The following guides may also be helpful:
 
