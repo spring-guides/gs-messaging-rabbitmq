@@ -205,12 +205,10 @@ spring.rabbitmq.username=myuser
 
 == Building the Application
 
-This section describes four different ways to run this guide:
+This section describes different ways to run this guide:
 
 1. Building and executing a JAR file
 2. Building and executing a Docker container using Cloud Native Buildpacks
-3. Building and executing a native image
-4. Building and executing a native image container using Cloud Native Buildpacks
 
 Regardless of how you choose to run the application, the output should be the same.
 
@@ -227,57 +225,6 @@ With a Docker environment enabled, you can run the application with the `docker 
 
 NOTE: The `--network` flag tells Docker to attach our guide container to the existing network that our RabbitMQ container uses.
 You can find more information in the https://docs.docker.com/network/#container-networks[Docker documentation^].
-
-=== Native Image Support
-
-Spring Boot also supports https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.introducing-graalvm-native-images[compilation to a native image^], provided you have a GraalVM distribution on your machine. To create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.native-build-tools.gradle[native image with Gradle^] using Native Build Tools, first make sure that your Gradle build contains a `plugins` block that includes `org.graalvm.buildtools.native`:
-----
-plugins {
-	id 'org.graalvm.buildtools.native' version '0.9.28'
-...
-----
-
-Additionally, you need to provide a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.advanced.custom-hints[custom hint^]. Add a new class `MyRuntimeHints` that implements `RuntimeHintsRegistrar`:
-
-====
-[source,java,tabsize=2]
-----
-package com.example.messagingrabbitmq;
-
-import java.lang.reflect.Method;
-
-import org.springframework.aot.hint.ExecutableMode;
-import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.RuntimeHintsRegistrar;
-import org.springframework.util.ReflectionUtils;
-
-public class MyRuntimeHints implements RuntimeHintsRegistrar {
-	@Override
-	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-		// Register method for reflection
-		Method method = ReflectionUtils.findMethod(Receiver.class, "receiveMessage", String.class);
-		hints.reflection().registerMethod(method, ExecutableMode.INVOKE);
-	}
-}
-----
-====
-
-To have Spring Boot recognize this configuration, you need to specify `@ImportRuntimeHints` on any `@Configuration` class.
-For this guide, you can put it on the `MessagingRabbitmqApplication` class.
-
-====
-[source,java,tabsize=2]
-----
-@SpringBootApplication
-@ImportRuntimeHints(MyRuntimeHints.class)
-public class MessagingRabbitmqApplication {
-	...
-----
-====
-
-You can then run the `./gradlew nativeCompile` command to generate a native image. When the build completes, you will be able to run the code with a near-instantaneous startup time by running the `build/native/nativeCompile/{build_name}` command.
-
-You can also create a https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html#native-image.developing-your-first-application.buildpacks[Native Image using Buildpacks^]. Provided that the Gradle `plugins` block contains `org.graalvm.buildtools.native`, you can generate a native image by running the `./gradlew bootBuildImage` task. Once the build completes, you can start your application with the `docker run --network container:guide-rabbit docker.io/library/{build_name}:{build_version}` command.
 
 Regardless of how you chose to build and run the application, you should see the following output:
 
