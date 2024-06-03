@@ -20,17 +20,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 == Setting up the RabbitMQ Broker
 
 Before you can build your messaging application, you need to set up a server to handle receiving and sending messages.
-This guide assumes that you use https://docs.spring.io/spring-boot/reference/features/dev-services.html#features.dev-services.docker-compose[Spring Boot Docker Compose support^].
-A prerequisite of this approach is that your development machine has a Docker environment, such as https://www.docker.com/products/docker-desktop/[Docker Desktop^], available.
-Add a dependency `spring-boot-docker-compose` that does the following:
-
-* Search for a compose.yml and other common compose filenames in your working directory
-* Call Docker compose up with the discovered compose.yml
-* Create service connection beans for each supported container
-* Call Docker compose stop when the application is shutdown
-
-To use Docker Compose support, you need only follow this guide.
-Based on the dependencies you pull in, Spring Boot finds the correct `compose.yml` file and start your Docker container when you run your application.
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/docker_compose_support.adoc[]
 
 If you choose to run the RabbitMQ server yourself instead of using Spring Boot Docker Compose support, you have a few options:
 
