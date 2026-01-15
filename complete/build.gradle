@@ -5,7 +5,10 @@ plugins {
 }
 
 group = 'com.example'
-sourceCompatibility = '17'
+
+java {
+	sourceCompatibility = '17'
+}
 
 repositories {
 	mavenCentral()
