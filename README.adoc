@@ -26,7 +26,7 @@ If you choose to run the RabbitMQ server yourself instead of using Spring Boot D
 
 * https://www.rabbitmq.com/download.html[Download the server^] and manually run it
 * Install with Homebrew, if you use a Mac
-* Manually run the `compose.yaml` file with `docker-compose up`
+* Manually run the `compose.yaml` file with `docker compose up`
 
 If you go with any of these alternate approaches, you should remove the `spring-boot-docker-compose` dependency from the Maven or Gradle build file.
 You will also need to add configuration to an `application.properties` file, as described in greater detail in the <<_preparing_to_build_the_application>> section.
@@ -170,7 +170,7 @@ services:
       - '5672:5672'
 ----
 
-You can now run `docker-compose up` to start the RabbitMQ service.
+You can now run `docker compose up` to start the RabbitMQ service.
 Now you should have an external RabbitMQ server that is ready to accept requests.
 
 Additionally, you need to tell Spring how to connect to the RabbitMQ server (this was handled automatically with Spring Boot Docker Compose support).
